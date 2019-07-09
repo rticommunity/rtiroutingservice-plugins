@@ -173,33 +173,32 @@ system:
     payload, and the resulting samples are forward to *RTI Shapes Demo*
     via DDS Topics `"Circle"`, `"Square"`, and `"Triangle"`.
 
-## Quickstart
+## Dependencies
+
+The following additional external dependencies are required to run the demo:
+
+- [Mosquitto MQTT Broker](https://mosquitto.org/download/)
+
+- [tmux](https://github.com/tmux/tmux) (optional)
+
+## Building
 
 This section contains instructions on how to configure, build, and run the
 demo on your system.
 
 The demo currently only supports Linux targets.
 
-The following tools are required to build and run the demo:
-
-- [RTI Connext DDS Professional 6.0.0](https://www.rti.com/free-trial)
-
-- [Mosquitto MQTT Broker](https://mosquitto.org/download/)
-
-- [CMake](https://cmake.org/download/)
-
-- [make](https://www.gnu.org/software/make/) (optional)
-
-- [tmux](https://github.com/tmux/tmux) (optional)
-
 The instructions assume an Ubuntu Linux 64-bit target host.
 
-### Dependencies
+1. Follow instructions to clone and build the rtiroutingservice-plugins
+repository. Make sure that the following components are built:
 
-1. Install RTI Connext DDS Professional 6.0.0. The location where
-   the libraries and other resources are installed will be referred to as
-   `${CONNEXTDDS_DIR}`, and we will use `${CONNEXTDDS_ARCH}` to identify the
-   target architecture (e.g. `"x64Linux3gcc5.4.0"` for a Linux 64-bit system).
+    - Adapter: MQTT
+    - Processor: Forward Engine (By Input Value)
+    - Transformation: Simple
+    - Transformation: JSON (Flat Type)
+    - Transformation: Field (Primitive)
+    - Example: MQTT Shapes
 
 2. Install the `mosquitto` MQTT Broker, and its companion, command-line 
    client applications, `mosquitto_pub`, and `mosquitto_sub`. On Ubuntu,
@@ -214,56 +213,194 @@ sudo service mosquitto stop
 sudo service mosquitto disable
 ```
 
-3. Install CMake and make sure `cmake` is available in your `${PATH}`.
-
-```sh
-sudo apt install cmake
-```
-
-4. All code is built using CMake, but a top-level `Makefile` is provided to
-  automate all task via convenient `make` targets. The easiest way to install
-  `make` (along with all other build tools needed by this demo) is through the
-  `build-essential` package:
-
-```sh
-sudo apt install build-essential
-```
-
-5. If you opt for using the included `make` targets, you should also install
-  `tmux` in order to spawn all components in a single window split into 
-  multiple panes:
+5. Optionally, you can also install `tmux` in order to spawn all components in 
+   a single window split into multiple panes:
 
 ```sh
 apt install tmux
 ```
+## Running
 
-### Building and Running (from rtiroutingservice-plugins)
+### Automatic Run
 
-1. Follow instructions in rtiroutingservice-plugins
-to clone and build the repository. Make sure that the following components are
-built:
-
-    - Adapter: MQTT
-    - Processor: Forward Engine (By Input Value)
-    - Transformation: Simple
-    - Transformation: JSON (Flat Type)
-    - Transformation: Field (Primitive)
-    - Example: MQTT Shapes
-
-2. From the root of `rtiroutingservice-plugins`, start/stop the demo using `make`:
+All components can be spawned at once using the `tmux` target:
 
 ```sh
-# Start/resume tmux session
-make mqtt-shapes-tmux
-# Kill tmux session
-make mqtt-shapes-tmux-stop
+cd examples/mqtt-shapes
+make tmux
 ```
+
+This will start (or resume) a new tmux session, which can be killed using target
+`tmux-stop`:
+
+```sh
+cd examples/mqtt-shapes
+make tmux-stop
+```
+
+### Manual Run
+
+If you prefer starting each component manually instead of using the provided
+`tmux` automation, please refer to this section for instructions on how to 
+start each one.
+
+For each component, you can use a one or more `make` targets, or invoke
+the component directly.
+
+All commands in this section assume that you already [built and installed the demo](#building).
+
+The installation directory will be referred to as `RSPLUGINS_INSTALL`.
+
+If you want to run components manually, make sure to either set
+`${CONNEXTDDS_DIR}` and `${CONNEXTDDS_ARCH}` in your environment, or
+replace them with the appropriate values in each command as needed.
+
+1. Enter directory `examples/mqtt-shapes`.
+
+    ```sh
+    cd examples/mqtt-shapes
+    ```
+
+2. Configure required environment variables
+
+    - If you plan on using `make`, store them in file `examples/mqtt/config.mk`:
+
+    ```sh
+    CONNEXTDDS_DIR     ?= /path/to/rti_connext_dds \
+    CONNEXTDDS_ARCH    ?= myOsAndCompiler \
+    # Uncomment if you installed the repository in a custom location
+    #RSPLUGINS_INSTALL=/path/to/rtiroutingservice-plugins/installation
+    ```
+
+    - If you plan on starting components manually, export them in the shell
+      environment:
+
+    ```sh
+    # Modify RSPLUGINS_INSTALL if you installed the repository in a
+    # custom location.
+    export CONNEXTDDS_DIR=/path/to/rti_connext_dds \
+           CONNEXTDDS_ARCH=myOsAndCompiler \
+           RSPLUGINS_INSTALL=../../install
+    ```
+
+3. Start the `mosquitto` MQTT Broker:
+
+    - Using `make`:
+
+    ```sh
+    make broker-start
+
+    # if you want to stop it:
+    make broker-stop
+    ```
+
+    - Manually:
+
+    ```sh
+    (cd ${RSPLUGINS_INSTALL} &&
+        mosquitto -c etc/mosquitto/mosquitto.conf -p 1883 -d)
+    ```
+
+4. In a separate terminal, monitor `mosquitto`'s log:
+
+    - Using `make`:
+
+    ```sh
+    make broker-log
+    ```
+
+    - Manually:
+
+    ```sh
+    tail -f ${RSPLUGINS_INSTALL}/mosquitto.log
+    ```
+
+5. In a separate terminal, start the *MQTT Publisher* application:
+
+    - Using `make`:
+
+    ```sh
+    make mqtt-publisher
+    ```
+
+    - Manually:
+
+    ```sh
+    ./bin/shapes_mqtt_publisher.sh GREEN
+    ```
+
+6. In a separate terminal, start the *MQTT Subscriber* application:
+
+    - Using `make`:
+
+    ```sh
+    make mqtt-subscriber
+    ```
+
+    - Manually:
+
+    ```sh
+    ./bin/shapes_mqtt_subscriber.sh "#"
+    ```
+
+7. In a separate terminal, start the *Shapes Agent* application:
+
+    - Using `make`:
+
+    ```sh
+    make agent-dds
+    ```
+
+    - Manually:
+
+    ```sh
+    (cd ${RSPLUGINS_INSTALL} &&
+        LD_LIBRARY_PATH="${RSPLUGINS_INSTALL}/lib" \
+            bin/shapes-agent-dds)
+    ```
+
+8. In a separate terminal, start an *RTI Shapes Demo* instance:
+
+    - Using `make`:
+
+    ```sh
+    make shapes
+    ```
+
+    - Manually:
+
+    ```sh
+    (cd ${RSPLUGINS_INSTALL} &&
+        ${CONNEXTDDS_DIR}/bin/rtishapesdemo -compact \
+                                            -workspaceFile etc/shapes_demo_workspace.xml
+                                            -dataType Shape \
+                                            -pubInterval 1000)
+    ```
+
+9. In a separate terminal, start an *RTI Routing Service* instance:
+
+    - Using `make`:
+
+    ```sh
+    make router
+    ```
+
+    - Manually:
+
+    ```sh
+    (cd ${RSPLUGINS_INSTALL} &&
+        LD_LIBRARY_PATH="lib" \
+        ${CONNEXTDDS_DIR}/bin/rtiroutingservice -verbosity 5 \
+                                                -cfgFile  etc/shapes_bridge.xml\
+                                                -cfgName shapes_bridge)
+    ```
+
 
 ## Navigating the demo
 
 ![Demo Screenshot](doc/static/Demo_Screenshot.png "Demo Screenshot")
 
-After spawning the demo (by using `make demo`, or `make tmux`), you will be 
+After spawning the demo, you will be 
 presented with a `tmux` window containing 5 panels. In clockwise order, 
 from top right, each panel contains:
 
@@ -294,130 +431,3 @@ by calling `tmux` directly as `tmux a -t DEMO`).
 You can terminate the `tmux` session (and all processes spawned within) by
 using `make tmux-stop` (or by calling `tmux` directly as
 `tmux kill-ses -t DEMO`).
-
-## Manual Run
-
-If you prefer starting each component manually instead of using the provided
-`tmux` automation, please refer to this section for instructions on how to 
-start each one.
-
-For each component, you can use a one or more `make` targets, or invoke
-the component directly.
-
-All commands in this section assume that you previously built and installed the
-demo, and that the clone's root directory is the current working directory.
-
-If you want to run components manually, make sure to either set
-`${CONNEXTDDS_DIR}` and `${CONNEXTDDS_ARCH}` in your environment, or to
-replace them with the appropriate values as needed.
-
-1. Start the `mosquitto` MQTT Broker:
-
-    - Using `make`:
-
-    ```sh
-    make broker-start
-
-    # if you want to stop it:
-    make broker-stop
-    ```
-
-    - Manually:
-
-    ```sh
-    cd install/
-    mosquitto -c etc/mosquitto/mosquitto.conf -p 1883 -d
-    ```
-
-2. In a separate terminal, monitor `mosquitto`'s log:
-
-    - Using `make`:
-
-    ```sh
-    make broker-log
-    ```
-
-    - Manually:
-
-    ```sh
-    tail -f install/mosquitto.log
-    ```
-
-3. In a separate terminal, start the *MQTT Publisher* application:
-
-    - Using `make`:
-
-    ```sh
-    make mqtt-publisher
-    ```
-
-    - Manually:
-
-    ```sh
-    ./bin/shapes_mqtt_publisher.sh GREEN
-    ```
-
-4. In a separate terminal, start the *MQTT Subscriber* application:
-
-    - Using `make`:
-
-    ```sh
-    make mqtt-subscriber
-    ```
-
-    - Manually:
-
-    ```sh
-    ./bin/shapes_mqtt_subscriber.sh "#"
-    ```
-
-5. In a separate terminal, start the *Shapes Agent* application:
-
-    - Using `make`:
-
-    ```sh
-    make agent-dds
-    ```
-
-    - Manually:
-
-    ```sh
-    cd install/
-    LD_LIBRARY_PATH="lib/:${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}" \
-        bin/shapes-agent-dds
-    ```
-
-6. In a separate terminal, start an *RTI Shapes Demo* instance:
-
-    - Using `make`:
-
-    ```sh
-    make shapes
-    ```
-
-    - Manually:
-
-    ```sh
-    ${CONNEXTDDS_DIR}/bin/rtishapesdemo -compact \
-                                        -workspaceFile etc/shapes_demo_workspace.xml
-                                        -dataType Shape \
-                                        -pubInterval 1000
-    ```
-
-7. In a separate terminal, start an *RTI Routing Service* instance:
-
-    - Using `make`:
-
-    ```sh
-    make router
-    ```
-
-    - Manually:
-
-    ```sh
-    cd install/
-    LD_LIBRARY_PATH="lib/:${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}" \
-        ${CONNEXTDDS_DIR}/bin/rtiroutingservice -verbosity 5 \
-                                                -cfgFile  etc/shapes_bridge.xml\
-                                                -cfgName shapes_bridge
-    ```

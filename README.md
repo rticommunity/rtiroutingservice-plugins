@@ -74,7 +74,7 @@ The following external dependencies are required to build the repository:
   - The location where RTI Connext DDS is installed will be referred to using variable `CONNEXTDDS_DIR`, while
     the target build architecture will be identified by `CONNEXTDDS_ARCH` (e.g. on a Linux 64-bit system `x64Linux3gcc5.4.0`).
 
-- An installation of OpenSSL
+- An installation of OpenSSL (optional)
 
   - This is only required if you want to enable security features implemented by different plugins.
   
@@ -93,7 +93,7 @@ the following variables:
 
 - `CONNEXTDDS_ARCH`
 
-- `OPENSSLHOME` (if you want to enable any of the `RTI_*_ENABLE_SSL` build options).
+- `OPENSSLHOME` (if you want to enable security features via `ENABLE_SSL`).
 
 For example, to configure and run the build from the command-line using the default generator for your build platform:
 
@@ -105,9 +105,9 @@ cd build
 # Configure build with cmake.
 # (change variables according to your environment)
 cmake /path/to/rtiroutingservice-plugins \
+      -DCMAKE_INSTALL_PREFIX=../install \
       -DCONNEXTDDS_DIR=/path/to/rti_connext_dds \
-      -DCONNEXTDDS_ARCH=myOsAndCompiler \
-      -DCMAKE_INSTALL_PREFIX=../install
+      -DCONNEXTDDS_ARCH=myOsAndCompiler
 
 # Perform build.
 # (add "install" target only if your generator supports it)
@@ -120,9 +120,8 @@ build release libraries.
 
 After building the `install` target, the build directory may be deleted if desired.
 
-If you want to enable support for security features, provide an OpenSSL installation and enable the associated CMake option,
-using `-DOPENSSLHOME=/path/to/openssl -DENABLE_SSL=ON`.
-
+If you want to enable security features provided by the different plugins, pass
+`-DENABLE_SSL=ON -DOPENSSLHOME=/path/to/openssl` to `cmake`.
 
 ### Building with `make`
 
@@ -137,7 +136,9 @@ The contents should look something like (replace with valid values):
 ```sh
 CONNEXTDDS_DIR      ?= /path/to/rti_connext_dds
 CONNEXTDDS_ARCH     ?= myOsAndCompiler
-OPENSSLHOME         ?= /path/to/openssl
+# Uncomment to enable security features
+#OPENSSLHOME         ?= /path/to/openssl
+#ENABLE_SSL          ?= ON
 ```
 
 [Note: by using `?=` you will be able to override these values from the shell enviroment and/or `make`'s command line. Use `:=` if
@@ -168,7 +169,7 @@ The build process can be controlled using the following CMake variables:
 | ENABLE_EXAMPLE_MQTTSHAPES | `ON` | Build example: MQTT Shapes |
 | DISABLE_LOG             | `OFF` | Disable all output of log messages to stdout |
 | ENABLE_LOG              | `ON`* | Force output of log messages to stdout (*Enabled automatically for Debug builds only, unless `DISABLE_LOG` is used) |
-| ENABLE_SSL              | `ON` | Include support for SSL/TLS. Requires OpenSSL |
+| ENABLE_SSL              | `OFF` | Include support for SSL/TLS. Requires OpenSSL |
 | ENABLE_TRACE            | `OFF` | Enable trace level debug output |
 
 ### Build Artefacts
