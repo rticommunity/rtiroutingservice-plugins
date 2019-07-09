@@ -47,7 +47,7 @@ repository:
 ## Cloning
 
 The repository uses [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules), so make sure to specify
-`--recur-submodules` option when cloning the repository:
+`--recurse-submodules` option when cloning the repository:
 
 ```sh
 git clone --recur-submodules https://github.com/rticommunity/rtiroutingservice-plugins.git
