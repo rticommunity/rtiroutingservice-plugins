@@ -50,7 +50,7 @@ The repository uses [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Su
 `--recurse-submodules` option when cloning the repository:
 
 ```sh
-git clone --recur-submodules https://github.com/rticommunity/rtiroutingservice-plugins.git
+git clone --recurse-submodules https://github.com/rticommunity/rtiroutingservice-plugins.git
 ```
 
 ## Building
