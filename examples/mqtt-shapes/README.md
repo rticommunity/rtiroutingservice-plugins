@@ -113,7 +113,7 @@ paylods of MQTT messages.
 The following figure presents the overall architecture of the demo scenario,
 including markers to describe data streams within the system:
 
-![Scenario Architecture](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Mqtt_Shapes_Architecture_with_data.png "Demo Scenario Architecture")
+![Scenario Architecture](doc/static/Mqtt_Shapes_Architecture_with_data.png "Demo Scenario Architecture")
 
 The *MQTT Publisher* application publishes shapes as JSON strings to MQTT topics
 `"mqtt/circles"`, `"mqtt/squares"`, and `"mqtt/triangles"`. These data are subscribed
@@ -261,7 +261,7 @@ make mqtt-shapes-tmux-stop
 
 ## Navigating the demo
 
-![Demo Screenshot](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Demo_Screenshot.png "Demo Screenshot")
+![Demo Screenshot](doc/static/Demo_Screenshot.png "Demo Screenshot")
 
 After spawning the demo (by using `make demo`, or `make tmux`), you will be 
 presented with a `tmux` window containing 5 panels. In clockwise order, 
@@ -281,7 +281,7 @@ A second window can be accessed using `Ctrl+b, 2`. This window contains
 2 panels, one running *RTI Shapes Demo*, and one monitoring the
 log of the `mosquitto` MQTT Broker.
 
-![Demo Screenshot 2nd window](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Demo_Screenshot_2.png "Demo Screenshot 2nd window")
+![Demo Screenshot 2nd window](doc/static/Demo_Screenshot_2.png "Demo Screenshot 2nd window")
 
 You can switch back to the previous windows using `Ctrl+b, 1`.
 
