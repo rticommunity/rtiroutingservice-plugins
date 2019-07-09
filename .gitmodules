@@ -1,0 +1,6 @@
+[submodule "plugins/adapters/mqtt/modules/paho.mqtt.c"]
+	path = plugins/adapters/mqtt/modules/paho.mqtt.c
+	url = https://github.com/eclipse/paho.mqtt.c.git
+[submodule "helpers/plugin-build-helper/modules/cmocka"]
+	path = helpers/plugin-build-helper/modules/cmocka
+	url = https://git.cryptomilk.org/projects/cmocka.git
