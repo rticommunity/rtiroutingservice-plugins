@@ -1,0 +1,14 @@
+color=RED,x=10,y=20,shapesize=30
+color=GREEN,x=120,y=140,shapesize=30
+color=RED,x=30,y=30,shapesize=40
+color=GREEN,x=140,y=160,shapesize=40
+color=RED,x=50,y=40,shapesize=50
+color=GREEN,x=160,y=180,shapesize=50
+color=RED,x=70,y=50,shapesize=60
+color=GREEN,x=170,y=20,shapesize=60
+color=RED,x=90,y=60,shapesize=70
+color=GREEN,x=180,y=200,shapesize=70
+color=RED,x=110,y=70,shapesize=80
+color=GREEN,x=190,y=220,shapesize=80
+color=RED,x=130,y=80,shapesize=90
+color=GREEN,x=200,y=240,shapesize=90
