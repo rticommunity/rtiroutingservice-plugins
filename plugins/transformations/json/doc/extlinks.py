@@ -14,7 +14,7 @@ LINK_CONNEXT_DOCS = 'https://community.rti.com/static/documentation/connext-dds'
     '/%s/doc' \
     % RTI_VERSION
 
-LINK_RSMQTT_REPO = 'https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-mqtt.git'
+LINK_RSMQTT_REPO = 'https://github.com/rticommunity/rtiroutingservice-plugins.git'
 
 LINK_PAHO_C = 'https://www.eclipse.org/paho/clients/c/'
 

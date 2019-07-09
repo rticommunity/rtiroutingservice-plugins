@@ -17,27 +17,3 @@ color=RED,x=10,y=20,shapesize=30
 ```
 
 You can modify the **LineConversion.c** to use a different file format.
-
-## Cloning
-
-This adapter is provided as part of the `rtiroutingservice-plugins` repository.
-
-To clone this repository, along with all required dependencies:
-
-```sh
-git clone --recurse-submodules https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-plugins.git
-```
-
-## Building
-
-Follow building instructions for `rtiroutingservice-plugins` and make sure to
-enable CMake option `ENABLE_ADAPTER_FILE` (enabled by default), e.g.:
-
-```sh
-mkdir build
-cd build
-cmake /path/to/rtiroutingservice-plugins \
-      -DCONNEXTDDS_DIR=/path/to/rti_connext_dds \
-      -DCONNEXTDDS_ARCH=targetCompilerAndOs \
-      -DENABLE_ADAPTER_FILE=ON
-```

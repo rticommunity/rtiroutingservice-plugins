@@ -11,7 +11,7 @@ using ``git``:
 
 .. code-block:: sh
 
-    git clone --recurse-submodule https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-transform.git
+    git clone --recurse-submodule https://github.com/rticommunity/rtiroutingservice-plugins.git
 
 
 The ``--recurse-submodule`` option is required to clone an additional

@@ -113,7 +113,7 @@ paylods of MQTT messages.
 The following figure presents the overall architecture of the demo scenario,
 including markers to describe data streams within the system:
 
-![Scenario Architecture](https://bitbucket.rti.com/users/asorbini/repos/rtiroutingservice-example-mqtt-shapes/raw/doc/static/Mqtt_Shapes_Architecture_with_data.png?at=refs%2Fheads%2Fmaster "Demo Scenario Architecture")
+![Scenario Architecture](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Mqtt_Shapes_Architecture_with_data.png "Demo Scenario Architecture")
 
 The *MQTT Publisher* application publishes shapes as JSON strings to MQTT topics
 `"mqtt/circles"`, `"mqtt/squares"`, and `"mqtt/triangles"`. These data are subscribed
@@ -239,7 +239,7 @@ apt install tmux
 
 ### Building and Running (from rtiroutingservice-plugins)
 
-1. Follow instructions in [rtiroutingservice-plugins](https://bitbucket.rti.com/users/asorbini/repos/rtiroutingservice-plugins/browse)
+1. Follow instructions in rtiroutingservice-plugins
 to clone and build the repository. Make sure that the following components are
 built:
 
@@ -259,58 +259,9 @@ make mqtt-shapes-tmux
 make mqtt-shapes-tmux-stop
 ```
 
-### Building and Running (stand-alone)
-
-1. Clone all required dependencies. All repositories will be cloned in a common
-   `mqtt-shapes-workspace/` base directory.
-
-```sh
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-helper-build.git
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-adapter-mqtt.git
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-transformation-simple.git
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-transformation-json.git
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-transformation-field.git
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-processor-git
-```
-
-2. Clone this repository. Once you have cloned the 
-   repository, enter the clone's directory. The rest of this section will
-   assume `rtiroutingservice-example-mqtt-shapes/` as the working directory.
-
-```sh
-git clone https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-example-mqtt-shapes.git
-```
-
-3. Create a `config.mk` from the provided example, and edit it according to
-   your system's configuration. In particular, make sure to set the appropriate
-   value for the following required variables:
-
-   | Variable | Value |
-   |:--------:|:-----:|
-   | `CONNEXTDDS_DIR` | Installation of RTI Connext DDS Professional |
-   | `CONNEXTDDS_ARCH` | Identifier for target build architecture |
-   | `OPENSSLHOME` | Installation of OpenSSL |
-   | `RSHELPER_DIR` | Local clone of `rtiroutingservice-helper-build` |
-   | `RTI_MQTT_DIR` | Local clone of `rtiroutingservice-adapter-mqtt` |
-   | `RTI_TSFM_DIR` | Local clone of `rtiroutingservice-transformation-simple` |
-   | `RTI_TSFM_JSON_DIR` | Local clone of `rtiroutingservice-transformation-json` |
-   | `RTI_TSFM_FIELD_DIR` | Local clone of `rtiroutingservice-transformation-field` |
-   | `RTI_PRCS_FWD_DIR` | Local clone of `rtiroutingservice-processor-fwd` |
-
-```sh
-cp config.example.mk config.mk
-vim config.mk
-```
-
-4. Build all components, and start them in a `tmux` session:
-
-```sh
-make demo
-```
-
 ## Navigating the demo
 
-![Demo Screenshot](https://bitbucket.rti.com/users/asorbini/repos/rtiroutingservice-example-mqtt-shapes/raw/doc/static/Demo_Screenshot.png?at=refs%2Fheads%2Fmaster "Demo Screenshot")
+![Demo Screenshot](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Demo_Screenshot.png "Demo Screenshot")
 
 After spawning the demo (by using `make demo`, or `make tmux`), you will be 
 presented with a `tmux` window containing 5 panels. In clockwise order, 
@@ -330,7 +281,7 @@ A second window can be accessed using `Ctrl+b, 2`. This window contains
 2 panels, one running *RTI Shapes Demo*, and one monitoring the
 log of the `mosquitto` MQTT Broker.
 
-![Demo Screenshot 2nd window](https://bitbucket.rti.com/users/asorbini/repos/rtiroutingservice-example-mqtt-shapes/raw/doc/static/Demo_Screenshot_2.png?at=refs%2Fheads%2Fmaster "Demo Screenshot 2nd window")
+![Demo Screenshot 2nd window](https://raw.githubusercontent.com/rticommunity/rtiroutingservice-plugins/master/examples/mqtt-shapes/doc/static/Demo_Screenshot_2.png "Demo Screenshot 2nd window")
 
 You can switch back to the previous windows using `Ctrl+b, 1`.
 
@@ -344,50 +295,6 @@ You can terminate the `tmux` session (and all processes spawned within) by
 using `make tmux-stop` (or by calling `tmux` directly as
 `tmux kill-ses -t DEMO`).
 
-
-## Manual Build
-
-If you prefer not to use the provided `Makefile`, you can run `cmake` directly
-to build all of the demo's components.
-
-1. Create a directory where the build will be performed. This directory
-   can be created anywhere in your system. For the sake of this example, we
-   will use the same locations used by the top-level `Makefile`, which
-   stores everything in subdirectories of the repository's clone (note that
-   these directories are ignored by `git` via `.gitignore`).
-
-```sh
-mkdir rtiroutingservice-example-mqtt-shapes/build
-cd rtiroutingservice-example-mqtt-shapes/build
-```
-
-2. Configure build using `cmake`. You will need to specify the location of
-   the Connext DDS libraries, their "architecture", the type of build to 
-   perform (Debug, or Release), and where you would like the generated
-   artefacts to be installed. This last step is optional but recommended to
-   collect all artefacts in a more convenient directory structure. After
-   "installation", the `build/` directory can be deleted, and the demo
-   can be run from the install location.
-
-```sh
-cmake .. -DCMAKE_BUILD_TYPE=Release \
-         -DCMAKE_INSTALL_PREFIX=../install
-         -DCONNEXTDDS_DIR=/path/to/rti_connext_dds.6.0.0 \
-         -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 \
-         -DOPENSSLHOME=/path/to/openssl \
-         -DRSHELPER_DIR=/path/to/rtiroutingservice-helper-build \
-         -DRTI_MQTT_DIR=/path/to/rtiroutingservice-adapter-mqtt \
-         -DRTI_TSFM_DIR=/path/to/rtiroutingservice-transformation-simple \
-         -DRTI_TSFM_JSON_DIR=/path/to/rtiroutingservice-transformation-json \
-         -DRTI_TSFM_FIELD_DIR=/path/to/rtiroutingservice-transformation-field \
-         -DRTI_PRCS_FWD_DIR=/path/to/rtiroutingservice-processor-fwd
-```
-
-3. Build and install libraries and executables:
-
-```sh
-cmake --build --install .
-```
 ## Manual Run
 
 If you prefer starting each component manually instead of using the provided

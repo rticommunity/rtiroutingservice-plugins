@@ -11,15 +11,11 @@ using ``git``:
 
 .. code-block:: sh
 
-    git clone --recurse-submodule https://bitbucket.rti.com/scm/~asorbini/rtiroutingservice-adapter-mqtt.git
+    git clone --recurse-submodule https://github.com/rticommunity/rtiroutingservice-plugins.git
 
 
 The ``--recurse-submodule`` option is required to clone three additional
 repositories as submodules:
-
-:plugin-helper: |RTI_HELPER| is a collection of helper scripts for CMake and
-                Make to facilitate the implementation of plugins for |RS|
-                using C.
 
 :paho.mqtt.c: The :link_paho_c:`Paho C Client <>` library is used as
               implementation of the client side of the MQTT protocol.
