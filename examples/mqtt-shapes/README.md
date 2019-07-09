@@ -200,25 +200,26 @@ repository. Make sure that the following components are built:
     - Transformation: Field (Primitive)
     - Example: MQTT Shapes
 
-2. Install the `mosquitto` MQTT Broker, and its companion, command-line 
+2. Install the `mosquitto` MQTT Broker, and its companion, command-line
    client applications, `mosquitto_pub`, and `mosquitto_sub`. On Ubuntu,
    these are provided by the `mosquitto` and `mosquitto-clients` packages.
-   By default, the broker will be started and added to the services run 
+   By default, the broker will be started and added to the services run
    at start up.
 
-```sh
-sudo apt install mosquitto mosquitto-clients
-# Stop broker and disable automatic execution
-sudo service mosquitto stop
-sudo service mosquitto disable
-```
+    ```sh
+    sudo apt install mosquitto mosquitto-clients
+    # Stop broker and disable automatic execution
+    sudo service mosquitto stop
+    sudo service mosquitto disable
+    ```
 
-5. Optionally, you can also install `tmux` in order to spawn all components in 
+3. Optionally, you can also install `tmux` in order to spawn all components in
    a single window split into multiple panes:
 
-```sh
-apt install tmux
-```
+    ```sh
+    apt install tmux
+    ```
+
 ## Running
 
 ### Automatic Run
