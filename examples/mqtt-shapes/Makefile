@@ -32,8 +32,7 @@ RSPLUGIN_CONFIG_VARS    := SHAPES_RATE \
                            SESSION_ENABLED_SHAPES \
                            SESSION_ENABLED_IO \
                            IO_USERNAME \
-                           IO_KEY \
-						   RSPLUGINS_INSTALL_DIR
+                           IO_KEY
 
 RSPLUGIN_TARGETS        := shapes \
                            agent-dds \
@@ -68,7 +67,7 @@ RTI_MQTTSHAPES_TMUX_SESSION_DEFAULT     ?= DEMO
 RTI_MQTTSHAPES_SESSION_ENABLED_IO_DEFAULT ?= true
 RTI_MQTTSHAPES_SESSION_ENABLED_AGENT_DEFAULT ?= true
 RTI_MQTTSHAPES_SESSION_ENABLED_SHAPES_DEFAULT ?= true
-RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR_DEFAULT    ?= ../../install
+RTI_MQTTSHAPES_INSTALL_DIR_DEFAULT      ?= ../../install
 RTI_MQTTSHAPES_MOSQUITTO_DEFAULT        ?= mosquitto
 RTI_MQTTSHAPES_MOSQUITTO_PORT_DEFAULT   ?= 1883
 RTI_MQTTSHAPES_MOSQUITTO_CONF_DEFAULT   ?= etc/mosquitto/mosquitto.conf
@@ -82,7 +81,7 @@ demo: setup \
 
 broker-start:
 	if [ -z "$$(ps aux | grep "mosquitto " | grep -v grep)" ]; then \
-	  cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	  cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
 	  $(RTI_MQTTSHAPES_MOSQUITTO) \
 		                      -c $(RTI_MQTTSHAPES_MOSQUITTO_CONF) \
 		                      -p $(RTI_MQTTSHAPES_MOSQUITTO_PORT) \
@@ -101,23 +100,23 @@ broker-log:
 	tail -f $(RTI_MQTT_INSTALL_DIR)/mosquitto.log
 
 shapes:
-	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
 	$(RTI_MQTTSHAPES_CONNEXTDDS_DIR)/bin/rtishapesdemo \
 	                    -compact -workspaceFile $(RTI_MQTTSHAPES_SHAPES_CONFIG) \
 	                    -dataType $(RTI_MQTTSHAPES_SHAPES_TYPE) \
 	                    -pubInterval $(shell expr $(RTI_MQTTSHAPES_SHAPES_RATE) \* 1000)
 
 agent-dds:
-	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
     $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 	
 agent-dds-gdb:
-	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
     gdb --args \
         $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 
 agent-dds-valgrind:
-	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
 	valgrind $(VALGRIND_ARGS) \
 	    $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 

@@ -250,7 +250,8 @@ the component directly.
 
 All commands in this section assume that you already [built and installed the demo](#building).
 
-The installation directory will be referred to as `RSPLUGINS_INSTALL`.
+The directory where the repository's artefacts have been installed will be 
+referred to as `INSTALL_DIR`.
 
 If you want to run components manually, make sure to either set
 `${CONNEXTDDS_DIR}` and `${CONNEXTDDS_ARCH}` in your environment, or
@@ -270,18 +271,18 @@ replace them with the appropriate values in each command as needed.
     CONNEXTDDS_DIR     ?= /path/to/rti_connext_dds \
     CONNEXTDDS_ARCH    ?= myOsAndCompiler \
     # Uncomment if you installed the repository in a custom location
-    #RSPLUGINS_INSTALL=/path/to/rtiroutingservice-plugins/installation
+    #INSTALL_DIR=/path/to/rtiroutingservice-plugins/installation
     ```
 
     - If you plan on starting components manually, export them in the shell
       environment:
 
     ```sh
-    # Modify RSPLUGINS_INSTALL if you installed the repository in a
+    # Modify INSTALL_DIR if you installed the repository in a
     # custom location.
     export CONNEXTDDS_DIR=/path/to/rti_connext_dds \
            CONNEXTDDS_ARCH=myOsAndCompiler \
-           RSPLUGINS_INSTALL=../../install
+           INSTALL_DIR=../../install
     ```
 
 3. Start the `mosquitto` MQTT Broker:
@@ -298,7 +299,7 @@ replace them with the appropriate values in each command as needed.
     - Manually:
 
     ```sh
-    (cd ${RSPLUGINS_INSTALL} &&
+    (cd ${INSTALL_DIR} &&
         mosquitto -c etc/mosquitto/mosquitto.conf -p 1883 -d)
     ```
 
@@ -313,7 +314,7 @@ replace them with the appropriate values in each command as needed.
     - Manually:
 
     ```sh
-    tail -f ${RSPLUGINS_INSTALL}/mosquitto.log
+    tail -f ${INSTALL_DIR}/mosquitto.log
     ```
 
 5. In a separate terminal, start the *MQTT Publisher* application:
@@ -355,8 +356,8 @@ replace them with the appropriate values in each command as needed.
     - Manually:
 
     ```sh
-    (cd ${RSPLUGINS_INSTALL} &&
-        LD_LIBRARY_PATH="${RSPLUGINS_INSTALL}/lib" \
+    (cd ${INSTALL_DIR} &&
+        LD_LIBRARY_PATH="${INSTALL_DIR}/lib" \
             bin/shapes-agent-dds)
     ```
 
@@ -371,7 +372,7 @@ replace them with the appropriate values in each command as needed.
     - Manually:
 
     ```sh
-    (cd ${RSPLUGINS_INSTALL} &&
+    (cd ${INSTALL_DIR} &&
         ${CONNEXTDDS_DIR}/bin/rtishapesdemo -compact \
                                             -workspaceFile etc/shapes_demo_workspace.xml
                                             -dataType Shape \
@@ -389,7 +390,7 @@ replace them with the appropriate values in each command as needed.
     - Manually:
 
     ```sh
-    (cd ${RSPLUGINS_INSTALL} &&
+    (cd ${INSTALL_DIR} &&
         LD_LIBRARY_PATH="lib" \
         ${CONNEXTDDS_DIR}/bin/rtiroutingservice -verbosity 5 \
                                                 -cfgFile  etc/shapes_bridge.xml\
