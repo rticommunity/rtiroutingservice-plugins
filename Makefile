@@ -19,26 +19,3 @@ INSTALL_DIR				?= $(RSPLUGIN_ROOT)/install
 
 include helpers/plugin-build-helper/make/rtiroutingservice_plugin_env.mk
 include helpers/plugin-build-helper/make/rtiroutingservice_plugin_targets.mk
-
-# .PHONY:	mqtt-shapes-tmux \
-# 		mqtt-shapes-tmux-stop \
-# 		mqtt-shapes-router \
-# 		mqtt-shapes-shapes \
-# 		adapter-mqtt-broker-start \
-# 		adapter-mqtt-broker-stop \
-
-
-mqtt-shapes-%:
-	make -C examples/mqtt-shapes \
-			RTI_MQTTSHAPES_INSTALL_DIR=$(RTI_PLUGINS_INSTALL_DIR) \
-			RTI_MQTT_DIR=$$(pwd)/plugins/adapters/mqtt \
-			RSHELPER_DIR=$$(pwd)/helpers/plugin-build-helper \
-			CONFIG_MK=$(CONFIG_MK) \
-			$*
-
-adapter-mqtt-%:
-	make -C plugins/adapters/mqtt \
-			RTI_MQTT_INSTALL_DIR=$(RTI_PLUGINS_INSTALL_DIR) \
-			RSHELPER_DIR=$$(pwd)/helpers/plugin-build-helper \
-			CONFIG_MK=$(CONFIG_MK) \
-			$*
