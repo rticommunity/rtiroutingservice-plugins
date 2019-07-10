@@ -35,7 +35,7 @@ The following table summarizes the RTI Routing Service plugins contained in the
 repository:
 
 | Type | Plugin | Location | Description | Library | Create Function |
-|:----:|:------:|:----:|:-----------:|:-------:|:---------:|
+|------|--------|------|-------------|---------|-----------|
 | Adapter | File | plugins/adapters/file | An adapter that reads and writes samples from a file using a custom serialization format. | rtirsfileadapter | ``RTI_RS_File_AdapterPlugin_create`` |
 | Adapter | MQTT | plugins/adapters/mqtt | An adapter that allows RTI Routing Service to act as an MQTT Client and to exchange DDS data with an MQTT Broker. | rtirsmqttadapter | ``RTI_RS_MQTT_AdapterPlugin_create`` |
 | Processor | Forwarding Engine (By Input Name) | plugins/processors/fwd | A processor that selects the *Output* to which a sample should be forwarded within a *Route* based on the name of the *Input* that produced it. | rtirsfwdprocessor | ``RTI_PRCS_FWD_ByInputNameForwardingEnginePlugin_create`` |
