@@ -244,13 +244,20 @@ If you didn't use `make` to build the repository (and thus likely didn't create
 a `config.mk` file in the repository's root), you will need to specify the 
 following variables to `make`:
 
-  - `CONNEXTDDS_DIR`
-  - `CONNEXTDDS_ARCH`
-  - `INSTALL_DIR` (if the repository's artefacts were installed to a custom
+- `CONNEXTDDS_DIR`
+- `CONNEXTDDS_ARCH`
+- `INSTALL_DIR` (if the repository's artefacts were installed to a custom
     location).
 
 As usual with `make`, these variables can be either set in the shell's
-environment, or passed directly to `make` on the command-line.
+environment, or passed directly to `make` on the command-line, e.g.:
+
+```sh
+make -C examples/mqtt-shapes CONNEXTDDS_DIR=/path/to/rti_connext_dds \
+                             CONNEXTDDS_ARCH=myOsAndCompiler \
+                             INSTALL_DIR=/path/to/install/dir \
+                             tmux
+```
 
 ### Manual Run
 
