@@ -160,7 +160,7 @@ You can delete the build directory after the files have been installed.
 The build process can be controlled using the following CMake variables:
 
 | Variable | Default | Description |
-|:--------:|:-------:|:-----------:|
+|----------|:-------:|-------------|
 | ENABLE_ALL          | `ON` | Build all plugins and examples |
 | ENABLE_ALL_PLUGINS  | `ON` | Build all plugins |
 | ENABLE_ALL_EXAMPLES | `ON` | Build all examples |
@@ -278,7 +278,7 @@ all properties accepted by each plugin.
 #### Adapter: File
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 | `<input>` | `FileName` | Yes | - | A file path |
 | `<input>` | `Loop` | No | `false` | A boolean value |
 | `<input>` | `MaxSamplesSize` | No | 4096 | An integer value greater than 0 |
@@ -293,7 +293,7 @@ all properties accepted by each plugin.
 #### Adapter: MQTT
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 | `<connection>` | `client.id` | Yes | - |  A non-empty string |
 | `<connection>` | `client.servers` | Yes | - | A list of MQTT Broker URIS, separated by semicolon. Each URI takes the form `<protocol>://<address>:<port>`, where `<protocol>` can be one of `tcp` or `ssl`. |
 | `<connection>` | `client.protocol_version` | No | `default` | `default`, `3.1`, `3.1.1` |
@@ -332,20 +332,20 @@ all properties accepted by each plugin.
 #### Processor: Forwarding Engine (By Input Name)
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 |`<processor>`| `forwarding_table` | Yes | - | A JSON array of entries with format `{ "input": "INPUT_NAME", "output": "OUTPUT_NAME" }` |
 
 #### Processor: Forwarding Engine (By Input Value)
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 |`<processor>`| `forwarding_table` | Yes | - | A JSON array of entries with format `{ "input": "INPUT_VALUE", "output": "OUTPUT_NAME" }` |
 |`<processor>`| `input_members` | Yes | - | A JSON array of entries with format `{ "input": "INPUT_NAME", "member": "INPUT_MEMBER" }` |
 
 #### Transformation: JSON (Flat Type)
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 |`<transformation>`| `buffer_member` | Yes | - | An identifier for a member of a type (e.g. `"foo.bar"`) |
 |`<transformation>` | `indent` | No | `false` | A boolean value |
 |`<transformation>` | `serialized_size_min` | No | 255 | An integer value greater or equal to 0 |
@@ -355,7 +355,7 @@ all properties accepted by each plugin.
 #### Transformation: Field (Primitive)
 
 | Target | Property | Required | Default | Accepted Values |
-|:------:|:--------:|:--------:|:-------:|:---------------:|
+|--------|----------|:--------:|:-------:|-----------------|
 |`<transformation>`| `buffer_member` | Yes | - | An identifier for a member of a type (e.g. `"foo.bar"`) |
 |`<transformation>` | `field` | Yes | - | An identifier for a member of a type (e.g. `"foo.bar"`) |
 |`<transformation>` | `field_type` | Yes | - | An IDL primitive type (e.g. `"unsigned long"`, `"uint64"`) |
