@@ -216,18 +216,20 @@ install/
 
 ### Plugins Registration
 
-Once the repository's libraries have been built and installed, you must
-register the plugins in RTI Routing Service's XML configuration in order to use
-them.
-
 All plugins library must be available in RTI Routing Service's dynamic library
 path.
 
 If you installed the repository's artefacts to a common location `${INSTALL_DIR}`,
-add `${INSTALL_DIR}/lib` to you
+make sure to add `${INSTALL_DIR}/lib` to your system's dynamic library path when
+starting RTI Routing Service (e.g. by adding it to `LD_LIBRARY_PATH` on Linux,
+or to `DYLD_LIBRARY_PATH` on Darwin).
+
+Every plugin must be registered in RTI Routing Service's XML configuration in 
+order to use it.
 
 The following snippet can be added at the begininning of the `<dds>` element to
-register all plugins contained in the repository:
+register all plugins contained in the repository (you can copy only those that
+you are interested in using):
 
 ```xml
 <plugin_library name="RSPlugins">
