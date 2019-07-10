@@ -10,8 +10,9 @@
 # use or inability to use the software.
 # 
 
-RSHELPER_DIR			?= ../rtiroutingservice-plugin-helper
-RTI_MQTT_DIR			?= ../rtiroutingservice-adapter-mqtt
+RSHELPER_DIR			?= ../../helpers/plugin-build-helper
+RTI_MQTT_DIR			?= ../../plugins/adapters/mqtt
+CONFIG_MK				?= ../../config.mk
 
 RSPLUGIN_ROOT           := $(shell pwd)
 RSPLUGIN_PREFIX         := RTI_MQTTSHAPES
@@ -27,13 +28,12 @@ RSPLUGIN_CONFIG_VARS    := SHAPES_RATE \
                            MOSQUITTO_PORT \
                            MOSQUITTO_CONF \
                            AGENT_ARGS \
-                           SESSION_ENABLED_AGENT_IN \
-                           SESSION_ENABLED_AGENT_OUT \
-                           SESSION_ENABLED_SHAPES_IN \
-                           SESSION_ENABLED_SHAPES_OUT \
+                           SESSION_ENABLED_AGENT \
+                           SESSION_ENABLED_SHAPES \
                            SESSION_ENABLED_IO \
                            IO_USERNAME \
-                           IO_KEY
+                           IO_KEY \
+						   RSPLUGINS_INSTALL_DIR
 
 RSPLUGIN_TARGETS        := shapes \
                            agent-dds \
@@ -65,9 +65,13 @@ RTI_MQTTSHAPES_ROUTER_FILE_DEFAULT      ?= etc/shapes_bridge.xml
 RTI_MQTTSHAPES_ROUTER_NAME_DEFAULT      ?= shapes_bridge
 RTI_MQTTSHAPES_ROUTER_VERBOSITY_DEFAULT ?= 5
 RTI_MQTTSHAPES_TMUX_SESSION_DEFAULT     ?= DEMO
-RTI_MQTTSHAPES_SESSION_ENABLED_IO       ?= true
-RTI_MQTTSHAPES_SESSION_ENABLED_AGENT    ?= true
-RTI_MQTTSHAPES_SESSION_ENABLED_SHAPES   ?= true
+RTI_MQTTSHAPES_SESSION_ENABLED_IO_DEFAULT ?= true
+RTI_MQTTSHAPES_SESSION_ENABLED_AGENT_DEFAULT ?= true
+RTI_MQTTSHAPES_SESSION_ENABLED_SHAPES_DEFAULT ?= true
+RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR_DEFAULT    ?= ../../install
+RTI_MQTTSHAPES_MOSQUITTO_DEFAULT        ?= mosquitto
+RTI_MQTTSHAPES_MOSQUITTO_PORT_DEFAULT   ?= 1883
+RTI_MQTTSHAPES_MOSQUITTO_CONF_DEFAULT   ?= etc/mosquitto/mosquitto.conf
 
 include $(RSHELPER_DIR)/make/rtiroutingservice_plugin_env.mk
 
@@ -76,38 +80,44 @@ include $(RSHELPER_DIR)/make/rtiroutingservice_plugin_targets.mk
 demo: setup \
       tmux
 
-broker-stop:
-	@make -C $(RTI_MQTT_DIR) \
-	     RTI_MQTT_INSTALL_DIR=$(RTI_MQTTSHAPES_INSTALL_DIR) \
-	     $@
-
 broker-start:
-	@make -C $(RTI_MQTT_DIR) \
-	     RTI_MQTT_INSTALL_DIR=$(RTI_MQTTSHAPES_INSTALL_DIR) \
-	     $@
+	if [ -z "$$(ps aux | grep "mosquitto " | grep -v grep)" ]; then \
+	  cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
+	  $(RTI_MQTTSHAPES_MOSQUITTO) \
+		                      -c $(RTI_MQTTSHAPES_MOSQUITTO_CONF) \
+		                      -p $(RTI_MQTTSHAPES_MOSQUITTO_PORT) \
+		                      -d  && \
+		echo "Started Mosquitto";\
+	else \
+		echo "Mosquitto already running";\
+	fi
+
+broker-stop:
+	killall $$(basename $(RTI_MQTTSHAPES_MOSQUITTO)) && \
+			echo "Killed Mosquitto" || \
+	    echo "Mosquitto not started"
 
 broker-log:
-	@make -C $(RTI_MQTTSHAPES_MOD_DIR)/adapter-mqtt \
-	     RTI_MQTT_INSTALL_DIR=$(RTI_MQTTSHAPES_INSTALL_DIR) \
-	     $@
+	tail -f $(RTI_MQTT_INSTALL_DIR)/mosquitto.log
 
 shapes:
+	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
 	$(RTI_MQTTSHAPES_CONNEXTDDS_DIR)/bin/rtishapesdemo \
 	                    -compact -workspaceFile $(RTI_MQTTSHAPES_SHAPES_CONFIG) \
 	                    -dataType $(RTI_MQTTSHAPES_SHAPES_TYPE) \
 	                    -pubInterval $(shell expr $(RTI_MQTTSHAPES_SHAPES_RATE) \* 1000)
 
 agent-dds:
-	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
     $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 	
 agent-dds-gdb:
-	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
     gdb --args \
         $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 
 agent-dds-valgrind:
-	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \
+	cd $(RTI_MQTTSHAPES_RSPLUGINS_INSTALL_DIR) && \
 	valgrind $(VALGRIND_ARGS) \
 	    $(RTI_MQTTSHAPES_BIN_DIR)/shapes-agent-dds $(RTI_MQTTSHAPES_AGENT_ARGS)
 
