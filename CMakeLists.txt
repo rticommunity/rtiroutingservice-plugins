@@ -20,20 +20,26 @@ set(RSHELPER_DIR                    ${CMAKE_CURRENT_LIST_DIR}/helpers/plugin-bui
 include(${RSHELPER_DIR}/cmake/rtiroutingservice_plugin.cmake)
 check_plugin_args()
 default_plugin_options()
+define_plugin_option(ENABLE_ALL
+                     "Build everything"                                 ON)
+define_plugin_option(ENABLE_ALL_PLUGINS
+                     "Build all plugins"                                ${RTI_PLUGINS_ENABLE_ALL})
+define_plugin_option(ENABLE_ALL_EXAMPLES
+                     "Build all examples"                               ${RTI_PLUGINS_ENABLE_ALL})
 define_plugin_option(ENABLE_ADAPTER_FILE
-                     "Build plugin: File Adapter"                       OFF)
+                     "Build plugin: File Adapter"                       ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_ADAPTER_MQTT
-                     "Build plugin: MQTT Adapter"                       OFF)
+                     "Build plugin: MQTT Adapter"                       ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_TRANSFORMATION_SIMPLE
-                     "Build plugin: Simple Transformation"              OFF)
+                     "Build plugin: Simple Transformation"              ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_TRANSFORMATION_FIELD
-                     "Build plugin: Field Transformation"               OFF)
+                     "Build plugin: Field Transformation"               ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_TRANSFORMATION_JSON
-                     "Build plugin: JSON Transformation"                OFF)
+                     "Build plugin: JSON Transformation"                ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_PROCESSOR_FWD
-                     "Build plugin: Forwarding Engine"                  OFF)
+                     "Build plugin: Forwarding Engine"                  ${RTI_PLUGINS_ENABLE_ALL_PLUGINS})
 define_plugin_option(ENABLE_EXAMPLE_MQTTSHAPES
-                     "Build example: MQTT Shapes"                       OFF)
+                     "Build example: MQTT Shapes"                       ${RTI_PLUGINS_ENABLE_ALL_EXAMPLES})
 # configure_plugin_env()
 
 set(RTI_MQTT_DIR            "${CMAKE_CURRENT_LIST_DIR}/plugins/adapters/mqtt"
