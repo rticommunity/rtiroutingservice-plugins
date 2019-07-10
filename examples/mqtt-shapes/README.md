@@ -240,6 +240,18 @@ This will start (or resume) a new tmux session, which can be killed using target
 make -C examples/mqtt-shapes tmux-stop
 ```
 
+If you didn't use `make` to build the repository (and thus likely didn't create
+a `config.mk` file in the repository's root), you will need to specify the 
+following variables to `make`:
+
+  - `CONNEXTDDS_DIR`
+  - `CONNEXTDDS_ARCH`
+  - `INSTALL_DIR` (if the repository's artefacts were installed to a custom
+    location).
+
+As usual with `make`, these variables can be either set in the shell's
+environment, or passed directly to `make` on the command-line.
+
 ### Manual Run
 
 If you prefer to start each component manually instead of using the provided

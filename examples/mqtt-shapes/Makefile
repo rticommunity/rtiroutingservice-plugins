@@ -17,7 +17,6 @@ CONFIG_MK				?= ../../config.mk
 RSPLUGIN_ROOT           := $(shell pwd)
 RSPLUGIN_PREFIX         := RTI_MQTTSHAPES
 RSPLUGIN_NAME           := rtiroutingservice-example-mqtt-shapes
-RSPLUGIN_NEEDS_CONFIG   := y
 RSPLUGIN_CONFIG_VARS    := SHAPES_RATE \
                            SHAPES_CONFIG \
                            SHAPES_TYPE \
