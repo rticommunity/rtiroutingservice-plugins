@@ -97,7 +97,7 @@ broker-stop:
 	    echo "Mosquitto not started"
 
 broker-log:
-	tail -f $(RTI_MQTT_INSTALL_DIR)/mosquitto.log
+	tail -f $(RTI_MQTTSHAPES_INSTALL_DIR)/mosquitto.log
 
 shapes:
 	cd $(RTI_MQTTSHAPES_INSTALL_DIR) && \

@@ -191,7 +191,7 @@ The demo currently only supports Linux targets.
 The instructions assume an Ubuntu Linux 64-bit target host.
 
 1. Follow instructions to clone and build the rtiroutingservice-plugins
-repository. Make sure that the following components are built:
+    repository. Make sure that the following components are built:
 
     - Adapter: MQTT
     - Processor: Forward Engine (By Input Value)
@@ -199,6 +199,9 @@ repository. Make sure that the following components are built:
     - Transformation: JSON (Flat Type)
     - Transformation: Field (Primitive)
     - Example: MQTT Shapes
+
+   If you plan on trying the "cloud" variant of the scenario, you must enable
+   security features by specifying `ENABLE_SSL=ON` in your build.
 
 2. Install the `mosquitto` MQTT Broker, and its companion, command-line
    client applications, `mosquitto_pub`, and `mosquitto_sub`. On Ubuntu,
@@ -227,35 +230,30 @@ repository. Make sure that the following components are built:
 All components can be spawned at once using the `tmux` target:
 
 ```sh
-cd examples/mqtt-shapes
-make tmux
+make -C examples/mqtt-shapes tmux
 ```
 
 This will start (or resume) a new tmux session, which can be killed using target
 `tmux-stop`:
 
 ```sh
-cd examples/mqtt-shapes
-make tmux-stop
+make -C examples/mqtt-shapes tmux-stop
 ```
 
 ### Manual Run
 
-If you prefer starting each component manually instead of using the provided
-`tmux` automation, please refer to this section for instructions on how to 
+If you prefer to start each component manually instead of using the provided
+`tmux` automation, please refer to this section for instructions on how to
 start each one.
 
-For each component, you can use a one or more `make` targets, or invoke
-the component directly.
+Each component can be started by one or more `make` targets, or it can be
+spawned directly from a shell.
 
-All commands in this section assume that you already [built and installed the demo](#building).
+All commands in this section assume that you already 
+[built and installed the demo](#building).
 
 The directory where the repository's artefacts have been installed will be 
-referred to as `INSTALL_DIR`.
-
-If you want to run components manually, make sure to either set
-`${CONNEXTDDS_DIR}` and `${CONNEXTDDS_ARCH}` in your environment, or
-replace them with the appropriate values in each command as needed.
+referred to as `${INSTALL_DIR}`.
 
 1. Enter directory `examples/mqtt-shapes`.
 
@@ -265,7 +263,8 @@ replace them with the appropriate values in each command as needed.
 
 2. Configure required environment variables
 
-    - If you plan on using `make`, store them in file `examples/mqtt/config.mk`:
+    - If you plan on using `make`, store them in file `config.mk` in the
+      repository's root:
 
     ```sh
     CONNEXTDDS_DIR     ?= /path/to/rti_connext_dds \
