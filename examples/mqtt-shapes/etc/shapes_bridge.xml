@@ -116,7 +116,9 @@
     </types>
 
     <routing_service name="shapes_bridge">
-
+        <administration>
+            <domain_id>100</domain_id>
+        </administration>
         <domain_route name="default">
 
             <participant name="dds">
@@ -161,13 +163,13 @@
                             </value>
                         </property>
                     </input>
-                    <dds_output name="dds::mqtt" participant="dds">
+                    <dds_output name="dds_mqtt" participant="dds">
                         <registered_type_name>RTI::MQTT::KeyedMessage</registered_type_name>
                         <datawriter_qos base_name="MqttShapesQos::mqtt_message_writer"/>
                     </dds_output>
                 </route>
                 <route name="output">
-                    <dds_input name="dds::mqtt" participant="dds">
+                    <dds_input name="dds_mqtt" participant="dds">
                         <registered_type_name>RTI::MQTT::KeyedMessage</registered_type_name>
                         <datareader_qos base_name="MqttShapesQos::mqtt_message_reader"/>
                     </dds_input>

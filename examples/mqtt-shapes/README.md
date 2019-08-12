@@ -128,7 +128,7 @@ The instance of *RTI Shapes Demo* publishes and subscribes to DDS Topics using
 type `ShapeType`.
 
 The *Shapes Agent* applications subscribes and publishes data to DDS Topic
-`"dds::mqtt"`, which uses type `RTI::MQTT::KeyedMessage` to encapsulate the
+`"dds_mqtt"`, which uses type `RTI::MQTT::KeyedMessage` to encapsulate the
 JSON-serialized shapes. 
 
 All application are able to receive data from all other applications in the
@@ -155,7 +155,7 @@ system:
 
   - The MQTT broker also deliver each MQTT message back to the *MQTT
     Adapter*, which stores the payload in `RTI::MQTT::KeyedMessage`
-    samples that are published to DDS Topic `"dds::mqtt"`, where they
+    samples that are published to DDS Topic `"dds_mqtt"`, where they
     are picked up by the *Shapes Agent* application.
 
 - Shapes published by *Shapes Agent* follow the inverse path of those

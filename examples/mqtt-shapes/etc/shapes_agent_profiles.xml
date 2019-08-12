@@ -63,7 +63,7 @@
     <domain_library name="ShapesAgentDomains">
         <domain name="domain/def" domain_id="46">
             <register_type name="RTI::MQTT::KeyedMessage" type_ref="RTI::MQTT::KeyedMessage" />
-            <topic name="dds::mqtt" register_type_ref="RTI::MQTT::KeyedMessage"/>
+            <topic name="dds_mqtt" register_type_ref="RTI::MQTT::KeyedMessage"/>
         </domain>
     </domain_library>
 
@@ -72,12 +72,12 @@
         <domain_participant name="agent" domain_ref="ShapesAgentDomains::domain/def">
             <participant_qos name="qos" base_name="ShapesAgentQos::default"/>
             <publisher name="publisher">
-                <data_writer name="mqtt_messages" topic_ref="dds::mqtt">
+                <data_writer name="mqtt_messages" topic_ref="dds_mqtt">
                     <datawriter_qos name="qos" base_name="ShapesAgentQos::mqtt_message_writer"/>
                 </data_writer>
             </publisher>
             <subscriber name="subscriber">
-                <data_reader name="mqtt_messages" topic_ref="dds::mqtt">
+                <data_reader name="mqtt_messages" topic_ref="dds_mqtt">
                     <datareader_qos name="qos" base_name="ShapesAgentQos::mqtt_message_reader"/>
                 </data_reader>
             </subscriber>

@@ -167,7 +167,7 @@
                             </value>
                         </property>
                     </input>
-                    <dds_output name="dds::mqtt" participant="dds">
+                    <dds_output name="dds_mqtt" participant="dds">
                         <registered_type_name>RTI::MQTT::KeyedMessage</registered_type_name>
                         <datawriter_qos base_name="MqttShapesQos::mqtt_message_writer"/>
                     </dds_output>

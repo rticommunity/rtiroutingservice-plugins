@@ -230,7 +230,7 @@ The value of this property is a list of semicolon-separated
 
 The following snippet demonstrate how to create an ``<input>`` which will
 subscribe to all topics available on the |MQTT_BROKER|, and route them
-to |DDS_TOPIC| ``"dds::mqtt"`` using |DDS_TYPE| ``RTI::MQTT:KeyedMessage``:
+to |DDS_TOPIC| ``"dds_mqtt"`` using |DDS_TYPE| ``RTI::MQTT:KeyedMessage``:
 
 .. code-block:: xml
 
@@ -252,7 +252,7 @@ to |DDS_TOPIC| ``"dds::mqtt"`` using |DDS_TYPE| ``RTI::MQTT:KeyedMessage``:
                             </value>
                         </property>
                     </input>
-                    <dds_output name="dds::mqtt" participant="dds">
+                    <dds_output name="dds_mqtt" participant="dds">
                         <registered_type_name>
                             RTI::MQTT::KeyedMessage
                         </registered_type_name>
@@ -283,7 +283,7 @@ them to a topic on the ``<connection>``'s |MQTT_BROKER|.
 
 The following snippet demonstrate how to configure an ``<output>`` to
 publish the payload of ``RTI::MQTT::KeyedMessage`` |DDS_SAMPLES| published
-on topic ``"dds::mqtt"`` to |MQTT_TOPIC| ``"foo/bar"``, with |MQTT_QOS| 1:
+on topic ``"dds_mqtt"`` to |MQTT_TOPIC| ``"foo/bar"``, with |MQTT_QOS| 1:
 
 .. code-block:: xml
 
@@ -292,7 +292,7 @@ on topic ``"dds::mqtt"`` to |MQTT_TOPIC| ``"foo/bar"``, with |MQTT_QOS| 1:
         <routing_service>
             <session>
                 <route>
-                    <dds_input name="dds::mqtt" participant="dds">
+                    <dds_input name="dds_mqtt" participant="dds">
                         <registered_type_name>
                             RTI::MQTT::KeyedMessage
                         </registered_type_name>
@@ -330,7 +330,7 @@ determine other publication setttings (e.g. topic, qos, retained flags, etc.):
         <routing_service>
             <session>
                 <route>
-                    <dds_input name="dds::mqtt" participant="dds">
+                    <dds_input name="dds_mqtt" participant="dds">
                         <registered_type_name>
                             RTI::MQTT::KeyedMessage
                         </registered_type_name>
