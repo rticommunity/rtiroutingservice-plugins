@@ -490,7 +490,7 @@ RTI_MQTT_Client_create_publication_requests(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_create_publication_requests)
     
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
 
     pub->req_ctx.pub = pub;
 
@@ -509,7 +509,7 @@ RTI_MQTT_Client_create_publication_requests(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
 
     return retcode;
 }
@@ -523,7 +523,7 @@ RTI_MQTT_Client_create_subscription_requests(
     
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_create_subscription_requests)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
 
     sub->req_ctx.sub = sub;
 
@@ -570,7 +570,7 @@ RTI_MQTT_Client_create_subscription_requests(
     
     retcode = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->sub_lock);
 
     return retcode;
 }
@@ -585,7 +585,7 @@ RTI_MQTT_Client_delete_publication_requests(
     
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_delete_publication_requests)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
 
     if (DDS_RETCODE_OK != RTI_MQTT_Client_delete_request(self, &pub->req))
     {
@@ -596,7 +596,7 @@ RTI_MQTT_Client_delete_publication_requests(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
     return retcode;
 }
 
@@ -609,7 +609,7 @@ RTI_MQTT_Client_delete_subscription_requests(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_delete_subscription_requests)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
 
     if (!RTI_MQTT_SubscriptionParamsSeq_set_length(&sub->req_ctx.params, 0))
     {
@@ -642,7 +642,7 @@ RTI_MQTT_Client_delete_subscription_requests(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->sub_lock);
     return retcode;
 }
 
@@ -661,14 +661,14 @@ RTI_MQTT_Client_on_connection_lost(struct RTI_MQTT_Client *self)
 
     RTI_MQTT_ERROR_1("connection LOST","client=%p",self)
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked)
+    RTI_MQTT_Mutex_assert_w_state(&self->cfg_lock,&locked)
     if (RTI_MQTT_Client_get_state(self) != 
                     RTI_MQTT_ClientStateKind_CONNECTED)
     {
         retcode = DDS_RETCODE_OK;
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked)
+    RTI_MQTT_Mutex_release_w_state(&self->cfg_lock,&locked)
 
     if (DDS_RETCODE_OK != 
             RTI_MQTT_Client_set_state(
@@ -688,7 +688,7 @@ RTI_MQTT_Client_on_connection_lost(struct RTI_MQTT_Client *self)
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked)
+    RTI_MQTT_Mutex_release_from_state(&self->cfg_lock,&locked)
 
     if (retcode != DDS_RETCODE_OK)
     {
@@ -722,7 +722,7 @@ RTI_MQTT_Client_on_message_arrived(
     RTI_MQTT_TRACE_2("message RECEIVED:","topic=%s, size=%u",
             topic, buffer_len)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
 
     seq_len = RTI_MQTT_SubscriptionPtrSeq_get_length(&self->subscriptions);
     for (i = 0; i < seq_len; i++)
@@ -761,7 +761,7 @@ RTI_MQTT_Client_on_message_arrived(
 
     retcode = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->sub_lock);
 
     if (retcode != DDS_RETCODE_OK)
     {
@@ -793,7 +793,7 @@ RTI_MQTT_Client_write_message(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_write_message)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
     
     if (DDS_RETCODE_OK != 
             RTI_MQTT_ClientMqttApi_write_message(
@@ -810,7 +810,7 @@ RTI_MQTT_Client_write_message(
 
     retval = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
     
     return retval;
 }
@@ -1110,7 +1110,7 @@ RTI_MQTT_Client_connect(struct RTI_MQTT_Client *self)
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_connect)
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->cfg_lock,&locked);
 
     if (RTI_MQTT_Client_get_state(self) == RTI_MQTT_ClientStateKind_CONNECTED)
     {
@@ -1139,7 +1139,7 @@ RTI_MQTT_Client_connect(struct RTI_MQTT_Client *self)
         /* TODO Log error */
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->cfg_lock,&locked);
 
     if (DDS_RETCODE_OK != RTI_MQTT_ClientMqttApi_connect(self))
     {
@@ -1173,7 +1173,7 @@ RTI_MQTT_Client_connect(struct RTI_MQTT_Client *self)
 
     retval = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->cfg_lock,&locked);
 
     return retval;
 }
@@ -1187,7 +1187,7 @@ RTI_MQTT_Client_disconnect(struct RTI_MQTT_Client *self)
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_disconnect)
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->cfg_lock,&locked);
 
     if (RTI_MQTT_Client_get_state(self) ==
                 RTI_MQTT_ClientStateKind_DISCONNECTED)
@@ -1220,7 +1220,7 @@ RTI_MQTT_Client_disconnect(struct RTI_MQTT_Client *self)
         goto done;
     }
 
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->cfg_lock,&locked);
 
     if (unsubscribe)
     {
@@ -1257,7 +1257,7 @@ RTI_MQTT_Client_disconnect(struct RTI_MQTT_Client *self)
 
     retval = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock, &locked);
+    RTI_MQTT_Mutex_release_from_state(&self->cfg_lock, &locked);
 
     return retval;
 }
@@ -1304,7 +1304,7 @@ RTI_MQTT_Client_subscribe(struct RTI_MQTT_Client *self,
     }
 
 #if RTI_MQTT_USE_LOG
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
     RTI_MQTT_LOG_2("subscription CREATED","client=%p, sub=%p", self, sub)
     {
         DDS_UnsignedLong i = 0,
@@ -1322,7 +1322,7 @@ RTI_MQTT_Client_subscribe(struct RTI_MQTT_Client *self,
     }
     RTI_MQTT_LOG_1("  - qos:","%d",sub->data->config->max_qos)
     RTI_MQTT_LOG_1("  - queue_size:","%d",sub->data->config->message_queue_size)
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->sub_lock);
 #endif /* RTI_MQTT_USE_LOG */
 
     *sub_out = sub;
@@ -1424,7 +1424,7 @@ RTI_MQTT_Client_publish(struct RTI_MQTT_Client *self,
     }
 
 #if RTI_MQTT_USE_LOG
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
     RTI_MQTT_LOG_2("publication CREATED","client=%p, pub=%p", self, pub)
     if (pub->data->config->use_message_info)
     {
@@ -1441,7 +1441,7 @@ RTI_MQTT_Client_publish(struct RTI_MQTT_Client *self,
     RTI_MQTT_LOG_2("  - max wait time:","%ds %uns", 
             pub->data->config->max_wait_time.seconds,
             pub->data->config->max_wait_time.nanoseconds)
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
 #endif /* RTI_MQTT_USE_LOG */
 
     *pub_out = pub;
@@ -1521,10 +1521,31 @@ RTI_MQTT_Client_initialize(struct RTI_MQTT_Client *self,
 
     *self = def_self;
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_initialize(&self->lock))
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_initialize(&self->cfg_lock))
     {
         /* TODO Log error */
-        goto done;
+        return DDS_RETCODE_ERROR;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_initialize(&self->mqtt_lock))
+    {
+        /* TODO Log error */
+        (void)RTI_MQTT_Mutex_finalize(&self->cfg_lock);
+        return DDS_RETCODE_ERROR;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_initialize(&self->sub_lock))
+    {
+        /* TODO Log error */
+        (void)RTI_MQTT_Mutex_finalize(&self->mqtt_lock);
+        (void)RTI_MQTT_Mutex_finalize(&self->cfg_lock);
+        return DDS_RETCODE_ERROR;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_initialize(&self->pub_lock))
+    {
+        /* TODO Log error */
+        (void)RTI_MQTT_Mutex_finalize(&self->sub_lock);
+        (void)RTI_MQTT_Mutex_finalize(&self->mqtt_lock);
+        (void)RTI_MQTT_Mutex_finalize(&self->cfg_lock);
+        return DDS_RETCODE_ERROR;
     }
 
     /* Create a RTI_MQTT_ClientStatus object to store the client's data */
@@ -1742,7 +1763,22 @@ RTI_MQTT_Client_finalize(struct RTI_MQTT_Client *self)
         self->data = NULL;
     }
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_finalize(&self->lock))
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_finalize(&self->pub_lock))
+    {
+        /* TODO Log error */
+        goto done;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_finalize(&self->sub_lock))
+    {
+        /* TODO Log error */
+        goto done;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_finalize(&self->mqtt_lock))
+    {
+        /* TODO Log error */
+        goto done;
+    }
+    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_finalize(&self->cfg_lock))
     {
         /* TODO Log error */
         goto done;
@@ -1765,7 +1801,7 @@ RTI_MQTT_Client_set_state(struct RTI_MQTT_Client *self,
     
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_set_state)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->cfg_lock);
 
     prev = self->data->state;
 
@@ -1785,7 +1821,7 @@ RTI_MQTT_Client_set_state(struct RTI_MQTT_Client *self,
 
 done:
 
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->cfg_lock);
 
     return retval;
 }
@@ -1947,7 +1983,7 @@ RTI_MQTT_Client_reconnect(struct RTI_MQTT_Client *self)
     }
 #endif
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->cfg_lock,&locked);
 
     /* If we're configured to not reconnect, we do nothing and exit */
     if (!self->data->config->reconnect)
@@ -1958,7 +1994,7 @@ RTI_MQTT_Client_reconnect(struct RTI_MQTT_Client *self)
         goto done;
     }
 
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->cfg_lock,&locked);
 
     if (DDS_RETCODE_OK != RTI_MQTT_Client_connect(self))
     {
@@ -1968,7 +2004,7 @@ RTI_MQTT_Client_reconnect(struct RTI_MQTT_Client *self)
 
     retval = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->cfg_lock,&locked);
     return retval;
 }
 
@@ -1982,7 +2018,7 @@ RTI_MQTT_Client_submit_all_subscriptions(struct RTI_MQTT_Client *self)
                 RTI_MQTT_SubscriptionRequestContext_INITIALIZER;
     DDS_Boolean locked = DDS_BOOLEAN_FALSE;
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->sub_lock,&locked);
     req_copy = *self->req_sub;
     req_copy.context = &req_ctx_copy;
     if (!RTI_MQTT_SubscriptionParamsSeq_copy(
@@ -1991,7 +2027,7 @@ RTI_MQTT_Client_submit_all_subscriptions(struct RTI_MQTT_Client *self)
         /* TODO Log error */
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->sub_lock,&locked);
 
     if (DDS_RETCODE_OK !=
             RTI_MQTT_Client_submit_subscriptions(self,&req_copy))
@@ -2003,7 +2039,7 @@ RTI_MQTT_Client_submit_all_subscriptions(struct RTI_MQTT_Client *self)
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->sub_lock,&locked);
 
     if (!RTI_MQTT_SubscriptionParamsSeq_finalize(&req_ctx_copy.params))
     {
@@ -2023,7 +2059,7 @@ RTI_MQTT_Client_cancel_all_subscriptions(struct RTI_MQTT_Client *self)
                 RTI_MQTT_SubscriptionRequestContext_INITIALIZER;
     DDS_Boolean locked = DDS_BOOLEAN_FALSE;
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->sub_lock,&locked);
     req_copy = *self->req_unsub;
     req_copy.context = &req_ctx_copy;
     if (!RTI_MQTT_SubscriptionParamsSeq_copy(
@@ -2032,7 +2068,7 @@ RTI_MQTT_Client_cancel_all_subscriptions(struct RTI_MQTT_Client *self)
         /* TODO Log error */
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->sub_lock,&locked);
 
     if (DDS_RETCODE_OK != 
             RTI_MQTT_Client_cancel_subscriptions(self,&req_copy))
@@ -2044,7 +2080,7 @@ RTI_MQTT_Client_cancel_all_subscriptions(struct RTI_MQTT_Client *self)
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->sub_lock,&locked);
 
     if (!RTI_MQTT_SubscriptionParamsSeq_finalize(&req_ctx_copy.params))
     {
@@ -2178,7 +2214,7 @@ RTI_MQTT_Client_add_subscription(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_add_subscription)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
     seq_len = RTI_MQTT_SubscriptionPtrSeq_get_length(&self->subscriptions);
     
     if (!RTI_MQTT_SubscriptionPtrSeq_ensure_length(
@@ -2196,7 +2232,7 @@ RTI_MQTT_Client_add_subscription(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->sub_lock);
     return retcode;
 }
 
@@ -2214,7 +2250,7 @@ RTI_MQTT_Client_remove_subscription(
     
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_remove_subscription)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->sub_lock);
 
     seq_len = RTI_MQTT_SubscriptionPtrSeq_get_length(&self->subscriptions);
 
@@ -2261,7 +2297,7 @@ RTI_MQTT_Client_remove_subscription(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock)
+    RTI_MQTT_Mutex_release(&self->sub_lock)
     return retcode;
 }
 
@@ -2276,7 +2312,7 @@ RTI_MQTT_Client_add_publication(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_add_publication)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
     seq_len = RTI_MQTT_PublicationPtrSeq_get_length(&self->publications);
 
     if (!RTI_MQTT_PublicationPtrSeq_ensure_length(
@@ -2295,7 +2331,7 @@ RTI_MQTT_Client_add_publication(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
     
     return retcode;
 }
@@ -2314,7 +2350,7 @@ RTI_MQTT_Client_remove_publication(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Client_remove_publication)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->pub_lock);
 
     seq_len = RTI_MQTT_PublicationPtrSeq_get_length(&self->publications);
 
@@ -2360,7 +2396,7 @@ RTI_MQTT_Client_remove_publication(
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->pub_lock);
 
     return retcode;
 }

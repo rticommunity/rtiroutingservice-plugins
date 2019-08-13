@@ -99,11 +99,8 @@ RTI_MQTT_Subscription_match(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Subscription_match)
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_take(&self->client->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
+    /* TODO RM Mutex: only used to protect self->data->config */
+    RTI_MQTT_Mutex_assert(&self->client->sub_lock);
 
     seq_len = DDS_StringSeq_get_length(&self->data->config->topic_filters);
     for (i = 0; i < seq_len && !match; i++)
@@ -124,10 +121,8 @@ RTI_MQTT_Subscription_match(
 
     retval = DDS_RETCODE_OK;
 done:
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_give(&self->client->lock))
-    {
-        /* TODO Log error */
-    }
+    /* TODO RM Mutex: only used to protect self->data->config */
+    RTI_MQTT_Mutex_release(&self->client->sub_lock);
     return retval;
 }
 

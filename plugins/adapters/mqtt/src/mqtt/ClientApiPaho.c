@@ -46,7 +46,7 @@ RTI_MQTT_ClientMqttApi_Paho_create_client(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_ClientMqttApi_Paho_create_client)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->mqtt_lock);
 
     client_addr = *DDS_StringSeq_get_reference(
                         &self->data->config->server_uris, 0);
@@ -120,7 +120,7 @@ done:
             self->client = NULL;
         }
     }
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->mqtt_lock);
     return retcode;
 }
 
@@ -132,7 +132,7 @@ RTI_MQTT_ClientMqttApi_Paho_delete_client(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_ClientMqttApi_Paho_delete_client)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->mqtt_lock);
 
     if (self->client == NULL)
     {
@@ -147,7 +147,7 @@ RTI_MQTT_ClientMqttApi_Paho_delete_client(
     
     retcode = DDS_RETCODE_OK;
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->mqtt_lock);
     return retcode;
 }
 
@@ -162,7 +162,7 @@ RTI_MQTT_ClientMqttApi_Paho_connect(struct RTI_MQTT_Client *self)
     
     RTI_MQTT_LOG_FN(RTI_MQTT_ClientMqttApi_Paho_connect)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->mqtt_lock);
 
     if (DDS_RETCODE_OK !=
             RTI_MQTT_Time_to_seconds(
@@ -326,7 +326,7 @@ RTI_MQTT_ClientMqttApi_Paho_connect(struct RTI_MQTT_Client *self)
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->mqtt_lock);
 
     if (conn_opts.password != NULL)
     {
@@ -344,7 +344,7 @@ RTI_MQTT_ClientMqttApi_Paho_disconnect(struct RTI_MQTT_Client *self)
     
     RTI_MQTT_LOG_FN(RTI_MQTT_ClientMqttApi_Paho_disconnect)
 
-    RTI_MQTT_Mutex_assert(&self->lock);
+    RTI_MQTT_Mutex_assert(&self->mqtt_lock);
 
     opts.onSuccess = RTI_MQTT_ClientMqttApi_Paho_on_success;
     opts.onFailure = RTI_MQTT_ClientMqttApi_Paho_on_failure;
@@ -360,7 +360,7 @@ RTI_MQTT_ClientMqttApi_Paho_disconnect(struct RTI_MQTT_Client *self)
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release(&self->lock);
+    RTI_MQTT_Mutex_release(&self->mqtt_lock);
     
     return retcode;
 }
@@ -426,7 +426,7 @@ RTI_MQTT_ClientMqttApi_Paho_submit_subscriptions(
     }
 #endif /* RTI_MQTT_USE_TRACE */
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->mqtt_lock,&locked);
     if (MQTTASYNC_SUCCESS !=
             MQTTAsync_subscribeMany(
                 self->client, seq_len, sub_topics, sub_qoss, &opts))
@@ -434,13 +434,13 @@ RTI_MQTT_ClientMqttApi_Paho_submit_subscriptions(
         RTI_MQTT_LOG_CLIENT_PAHO_C_SUBSCRIBE_FAILED(self)
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->mqtt_lock,&locked);
     
     retcode = DDS_RETCODE_OK;
     
 done:
 
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->mqtt_lock,&locked);
     
     if (sub_qoss != NULL)
     {
@@ -499,7 +499,7 @@ RTI_MQTT_ClientMqttApi_Paho_cancel_subscriptions(
     }
 #endif /* RTI_MQTT_USE_TRACE */
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->mqtt_lock,&locked);
 
     if (MQTTASYNC_SUCCESS !=
             MQTTAsync_unsubscribeMany(
@@ -508,12 +508,12 @@ RTI_MQTT_ClientMqttApi_Paho_cancel_subscriptions(
         RTI_MQTT_LOG_CLIENT_PAHO_C_SUBSCRIBE_FAILED(self)
         goto done;
     }
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->mqtt_lock,&locked);
 
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->mqtt_lock,&locked);
     if (sub_topics != NULL)
     {
         RTI_MQTT_Heap_free(sub_topics);
@@ -554,7 +554,7 @@ RTI_MQTT_ClientMqttApi_Paho_write_message(
     opts.onFailure = RTI_MQTT_ClientMqttApi_Paho_on_failure;
     opts.context = req;
 
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->mqtt_lock,&locked);
 
     if (MQTTASYNC_SUCCESS !=
             MQTTAsync_sendMessage(
@@ -564,12 +564,12 @@ RTI_MQTT_ClientMqttApi_Paho_write_message(
         goto done;
     }
 
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->mqtt_lock,&locked);
     
     retcode = DDS_RETCODE_OK;
     
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->mqtt_lock,&locked);
 
     if (retcode != DDS_RETCODE_OK)
     {
@@ -600,7 +600,7 @@ RTI_MQTT_ClientMqttApi_Paho_connection_lost_thread(void *arg)
      * handler for all currently pending requests by forcing deletion of
      * the session. The only way to do that is to delete the client and to
      * recreate it. */
-    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_assert_w_state(&self->mqtt_lock,&locked);
 
     if (DDS_RETCODE_OK !=
             RTI_MQTT_ClientMqttApi_delete_client(self))
@@ -616,7 +616,7 @@ RTI_MQTT_ClientMqttApi_Paho_connection_lost_thread(void *arg)
         goto done;
     }
 
-    RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_w_state(&self->mqtt_lock,&locked);
 
     if (DDS_RETCODE_OK != RTI_MQTT_Client_on_connection_lost(self))
     {
@@ -627,7 +627,7 @@ RTI_MQTT_ClientMqttApi_Paho_connection_lost_thread(void *arg)
     retval = DDS_BOOLEAN_TRUE;
 
 done:
-    RTI_MQTT_Mutex_release_from_state(&self->lock,&locked);
+    RTI_MQTT_Mutex_release_from_state(&self->mqtt_lock,&locked);
 
     if (!retval)
     {

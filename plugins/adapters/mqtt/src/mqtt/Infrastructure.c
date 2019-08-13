@@ -978,8 +978,8 @@ RTI_MQTT_Mutex_take(RTI_MQTT_Mutex *self)
         RTI_MQTT_ERROR_1("failed to take mutex:", "mutex=%p", self)
         goto done;
     }
-
-    RTI_MQTT_TRACE_1("TAKEN mutex:", "mutex=%p", self)
+    RTI_MQTT_TRACE_2("TAKEN mutex:", "mutex=%p, thread=%llu",
+        self, RTIOsapiThread_getCurrentThreadID())
 
     retval = DDS_RETCODE_OK;
 done:
@@ -997,7 +997,8 @@ RTI_MQTT_Mutex_give(RTI_MQTT_Mutex *self)
         goto done;
     }
 
-    RTI_MQTT_TRACE_1("GIVEN mutex:", "mutex=%p", self)
+    RTI_MQTT_TRACE_2("GIVEN mutex:", "mutex=%p, thread=%llu",
+        self, RTIOsapiThread_getCurrentThreadID())
 
     retval = DDS_RETCODE_OK;
 done:

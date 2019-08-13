@@ -108,15 +108,13 @@ RTI_MQTT_Publication_write(
     DDS_UnsignedLong topic_len = 0,
                      payload_len = 0;
     struct DDS_OctetSeq payload = DDS_SEQUENCE_INITIALIZER;
-    DDS_Boolean use_message_info = DDS_BOOLEAN_FALSE;
+    DDS_Boolean use_message_info = DDS_BOOLEAN_FALSE,
+                locked = DDS_BOOLEAN_FALSE;
 
     RTI_MQTT_LOG_FN(RTI_MQTT_Publication_write)
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_take(&self->client->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
+    /* TODO RM Mutex: only used to protect self->data->config */
+    RTI_MQTT_Mutex_assert_w_state(&self->client->pub_lock,&locked);
 
     use_message_info = self->data->config->use_message_info;
 
@@ -133,11 +131,8 @@ RTI_MQTT_Publication_write(
         params.qos_level = self->data->config->qos;
     }
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_give(&self->client->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
+    /* TODO RM Mutex: only used to protect self->data->config */
+    RTI_MQTT_Mutex_release_w_state(&self->client->pub_lock,&locked);
 
     if (use_message_info)
     {
@@ -222,6 +217,8 @@ RTI_MQTT_Publication_write(
 
     retval = DDS_RETCODE_OK;
 done:
+    /* TODO RM Mutex: only used to protect self->data->config */
+    RTI_MQTT_Mutex_release_from_state(&self->client->pub_lock,&locked);
 
     if (topic != NULL)
     {

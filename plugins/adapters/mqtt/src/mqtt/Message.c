@@ -664,12 +664,7 @@ RTI_MQTT_MessageReceiveQueue_receive(
         goto done;
     }
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_take(&self->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
-    locked = DDS_BOOLEAN_TRUE;
+    RTI_MQTT_Mutex_assert_w_state(&self->lock,&locked);
 
     if (self->capacity > 0) 
     {
@@ -714,13 +709,11 @@ RTI_MQTT_MessageReceiveQueue_receive(
 
     retval = DDS_RETCODE_OK;
 done:
+    
     if (locked)
     {
         RTI_MQTT_MessageReceiveQueue_log_message_state(self);
-        if (DDS_RETCODE_OK != RTI_MQTT_Mutex_give(&self->lock))
-        {
-            /* TODO Log error */
-        }
+        RTI_MQTT_Mutex_release_w_state(&self->lock,&locked);
     }
 
     return retval;
@@ -1141,11 +1134,7 @@ RTI_MQTT_MessageReceiveQueue_read(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_MessageReceiveQueue_read)
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_take(&self->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
+    RTI_MQTT_Mutex_assert(&self->lock);
 
     if (self->capacity > 0) 
     {
@@ -1177,10 +1166,7 @@ RTI_MQTT_MessageReceiveQueue_read(
     retval = DDS_RETCODE_OK;
 done:
     RTI_MQTT_MessageReceiveQueue_log_message_state(self);
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_give(&self->lock))
-    {
-        /* TODO Log error */
-    }
+    RTI_MQTT_Mutex_release(&self->lock);
 
     return retval;
 }
@@ -1196,11 +1182,7 @@ RTI_MQTT_MessageReceiveQueue_return_loan(
 
     RTI_MQTT_LOG_FN(RTI_MQTT_MessageReceiveQueue_return_loan)
 
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_take(&self->lock))
-    {
-        /* TODO Log error */
-        return DDS_RETCODE_ERROR;
-    }
+    RTI_MQTT_Mutex_assert(&self->lock);
     
     if (!self->read_buffer_loaned)
     {
@@ -1252,10 +1234,7 @@ RTI_MQTT_MessageReceiveQueue_return_loan(
     retval = DDS_RETCODE_OK;
 done:
     RTI_MQTT_MessageReceiveQueue_log_message_state(self);
-    if (DDS_RETCODE_OK != RTI_MQTT_Mutex_give(&self->lock))
-    {
-        /* TODO Log error */
-    }
+    RTI_MQTT_Mutex_release(&self->lock);
 
     return retval;
 }
@@ -1467,3 +1446,5 @@ done:
 
     return retval;
 }
+
+

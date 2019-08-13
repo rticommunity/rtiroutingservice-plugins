@@ -32,7 +32,10 @@ struct RTI_MQTT_Client
     struct RTI_MQTT_SubscriptionParamsSeq   params_sub;
     struct RTI_MQTT_SubscriptionPtrSeq      subscriptions;
     struct RTI_MQTT_PublicationPtrSeq       publications;
-    RTI_MQTT_Mutex                          lock;
+    RTI_MQTT_Mutex                          cfg_lock;
+    RTI_MQTT_Mutex                          mqtt_lock;
+    RTI_MQTT_Mutex                          sub_lock;
+    RTI_MQTT_Mutex                          pub_lock;
 };
 
 #define RTI_MQTT_Client_INITIALIZER \
