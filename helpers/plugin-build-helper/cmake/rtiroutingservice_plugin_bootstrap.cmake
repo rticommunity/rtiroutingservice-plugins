@@ -47,12 +47,14 @@ macro(find_connextdds       shared)
 
         append_to_list(CMAKE_MODULE_PATH
             "${${RSPLUGIN_PREFIX}_CONNEXTDDS_DIR}/resource/cmake")
+        
+        set_if_undefined(${RSPLUGIN_PREFIX}_CONNEXT_COMPONENTS
+                            core
+                            routing_service)
 
         find_package(RTIConnextDDS      "${${RSPLUGIN_PREFIX}_CONNEXTDDS_VERSION}"
             REQUIRED
-            COMPONENTS
-                core
-                routing_service
+            COMPONENTS ${${RSPLUGIN_PREFIX}_CONNEXT_COMPONENTS}
         )
         unset(BUILD_SHARED_LIBS)
         set(BUILD_SHARED_LIBS           ${build_shared_libs_prev})
@@ -103,14 +105,20 @@ macro(configure_connextdds)
 
     set(RTIDDSGEN               "${CONNEXTDDS_DIR}/bin/rtiddsgen")
 
+    set_if_undefined(${RSPLUGIN_PREFIX}_CONNEXT_CXX_LIBS
+                        RTIConnextDDS::cpp2_api
+                        RTIConnextDDS::routing_service_cpp2)
+    
+    set_if_undefined(${RSPLUGIN_PREFIX}_CONNEXT_C_LIBS
+                        RTIConnextDDS::c_api
+                        RTIConnextDDS::routing_service_c)
+
     if(${RSPLUGIN_PREFIX}_CXX)
         append_to_list(${RSPLUGIN_PREFIX}_LIBS
-                    RTIConnextDDS::cpp2_api
-                    RTIConnextDDS::routing_service_cpp2)
+                        ${${RSPLUGIN_PREFIX}_CONNEXT_CXX_LIBS})
     else()
         append_to_list(${RSPLUGIN_PREFIX}_LIBS
-                    RTIConnextDDS::c_api
-                    RTIConnextDDS::routing_service_c)
+                        ${${RSPLUGIN_PREFIX}_CONNEXT_C_LIBS})
     endif()
     
     append_to_list(${RSPLUGIN_PREFIX}_INCLUDES
