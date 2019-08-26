@@ -23,7 +23,9 @@ macro(configure_plugin_deps)
         set(CMAKE_CXX_STANDARD 11)
     endif()
 
-    configure_connextdds()
+    if(NOT ${RSPLUGIN_PREFIX}_NO_CONNEXTDDS)
+        configure_connextdds()
+    endif()
 
     if(${RSPLUGIN_PREFIX}_ENABLE_SSL)
         configure_openssl()
@@ -56,6 +58,7 @@ macro(find_connextdds       shared)
             REQUIRED
             COMPONENTS ${${RSPLUGIN_PREFIX}_CONNEXT_COMPONENTS}
         )
+
         unset(BUILD_SHARED_LIBS)
         set(BUILD_SHARED_LIBS           ${build_shared_libs_prev})
         if(NOT RTIConnextDDS_FOUND)
@@ -145,7 +148,6 @@ macro(define_plugin_option opt desc def_val)
 endmacro()
 
 macro(default_plugin_options)
-
     define_plugin_option(ENABLE_SSL    
             "Enable support for SSL/TLS for ${RSPLUGIN_NAME}" OFF)
     define_plugin_option(ENABLE_LOG
