@@ -77,16 +77,21 @@ macro(configure_doc_dir)
     set(${RSPLUGIN_PREFIX}_DOC_SOURCES        ${${RSPLUGIN_PREFIX}_DOC_INDEX_IN}
                                               ${RSPLUGIN_DOC_SOURCES})
     
+    set(${RSPLUGIN_PREFIX}_DOC_DEPS     ${${RSPLUGIN_PREFIX}_HEADERS} 
+                                        ${${RSPLUGIN_PREFIX}_SOURCES})
+
     # generate_type_supports()
-    import_idl()
+    if(${RSPLUGIN_PREFIX}_IDL_GENERATE)
+        append_to_list(${RSPLUGIN_PREFIX}_DOC_DEPS
+                            ${${RSPLUGIN_PREFIX}_XML_FILES}
+                            ${${RSPLUGIN_PREFIX}_IDL_FILES})
+        import_idl()
+    endif()
 
     add_custom_command(OUTPUT ${${RSPLUGIN_PREFIX}_DOC_DOXYGEN_DIR}
                     COMMAND ${DOXYGEN_BIN} Doxyfile
                     WORKING_DIRECTORY ${${RSPLUGIN_PREFIX}_DOC_DIR}
-                    DEPENDS ${${RSPLUGIN_PREFIX}_HEADERS} 
-                            ${${RSPLUGIN_PREFIX}_SOURCES}
-                            ${${RSPLUGIN_PREFIX}_XML_FILES}
-                            ${${RSPLUGIN_PREFIX}_IDL_FILES}
+                    DEPENDS ${${RSPLUGIN_PREFIX}_DOC_DEPS}
                     VERBATIM)
 
     add_custom_command(OUTPUT ${${RSPLUGIN_PREFIX}_DOC_BUILD_DIR}

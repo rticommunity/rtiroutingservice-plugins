@@ -200,7 +200,9 @@ endfunction()
 ###############################################################################
 macro(configure_plugin_files)
 
-    configure_idl_files()
+    if(${RSPLUGIN_PREFIX}_IDL_GENERATE)
+        configure_idl_files()
+    endif()
 
     ##########################################################################
 
