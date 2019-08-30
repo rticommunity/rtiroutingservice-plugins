@@ -34,7 +34,9 @@ endmacro()
 # 
 ###############################################################################
 macro(configure_tester)
-    find_connextdds(OFF)
+    if(NOT ${RSPLUGIN_PREFIX}_NO_CONNEXTDDS)
+        find_connextdds(OFF)
+    endif()
 
     log_status("CONFIGURING tester: ${TESTER_EXEC}")
 
