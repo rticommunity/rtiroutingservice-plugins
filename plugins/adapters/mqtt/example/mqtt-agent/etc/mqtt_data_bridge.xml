@@ -14,7 +14,7 @@
 
     <plugin_library name="MqttDataBridgePlugins">
         <adapter_plugin name="MqttAdapter">
-            <dll>rtiroutingservice_adapter_mqtt</dll>
+            <dll>rtirsmqttadapter</dll>
             <create_function>
                 RTI_RS_MQTT_AdapterPlugin_create
             </create_function>
@@ -56,15 +56,15 @@
     <types>
         <module name="RTI">
             <module name="MQTT">
-                <enum name="QosLevelKind">
-                    <enumerator name="RTI_MQTT_QosLevel_UNKNOWN"/>
-                    <enumerator name="RTI_MQTT_QosLevel_ZERO"/>
-                    <enumerator name="RTI_MQTT_QosLevel_ONE"/>
-                    <enumerator name="RTI_MQTT_QosLevel_TWO"/>
+                <enum name="QosLevel">
+                    <enumerator name="UNKNOWN"/>
+                    <enumerator name="ZERO"/>
+                    <enumerator name="ONE"/>
+                    <enumerator name="TWO"/>
                 </enum>
                 <struct name= "MessageInfo" nested="true">
                     <member name="id" type="int32"/>
-                    <member name="qos_level" type="nonBasic" nonBasicTypeName= "RTI::MQTT::QosLevelKind"/>
+                    <member name="qos_level" type="nonBasic" nonBasicTypeName= "RTI::MQTT::QosLevel"/>
                     <member name="retained" type="boolean"/>
                     <member name="duplicate" type="boolean"/>
                 </struct>

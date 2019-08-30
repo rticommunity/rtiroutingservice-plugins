@@ -413,6 +413,7 @@ MqttAgent_publish_message(struct MqttAgent *self)
     {
         RTI_MQTT_ERROR_1("failed to set message topic",
             "(%d)", self->msg_sent_tot)
+        goto done;
     }
     self->pub_msg->info->qos_level = MQTT_AGENT_WRITER_QOS;
     self->pub_msg->info->retained = MQTT_AGENT_WRITER_RETAINED;
@@ -423,6 +424,7 @@ MqttAgent_publish_message(struct MqttAgent *self)
     {
         RTI_MQTT_ERROR_1("failed to allocate message",
             "(%d)", self->msg_sent_tot)
+        goto done;
     }
     sprintf(msg_buf,msg_fmt,self->msg_sent_tot);
 
