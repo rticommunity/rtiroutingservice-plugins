@@ -322,6 +322,9 @@ macro(configure_plugin_env)
     set(${RSPLUGIN_PREFIX}_INCLUDE_DIRS     "${RSPLUGIN_INCLUDE_DIRS}"
             CACHE INTERNAL "List of additional include directories for ${RSPLUGIN_NAME}")
 
+    set(${RSPLUGIN_PREFIX}_OBJS     "${RSPLUGIN_OBJS}"
+            CACHE INTERNAL "List of object libraries to link into ${RSPLUGIN_NAME}")
+
     set(${RSPLUGIN_PREFIX}_DEPS     "${RSPLUGIN_DEPS}"
             CACHE INTERNAL "List of target dependencies for ${RSPLUGIN_NAME}")
     

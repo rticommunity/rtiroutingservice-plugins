@@ -107,8 +107,14 @@ function(configure_plugin_exec exec_name exec_prefix)
     if(NOT "${${exec_prefix}_LIBS}" STREQUAL "")
         append_to_list(${exec_q_prefix}_LIBS ${${exec_prefix}_LIBS})
     endif()
-    if(TARGET ${${RSPLUGIN_PREFIX}_LIBRARY}-shared)
-        append_to_list(${exec_q_prefix}_LIBS    ${${RSPLUGIN_PREFIX}_LIBRARY}-shared)
+    if (${exec_prefix}_STATIC)
+        if(TARGET ${${RSPLUGIN_PREFIX}_LIBRARY}-static)
+            append_to_list(${exec_q_prefix}_LIBS    ${${RSPLUGIN_PREFIX}_LIBRARY}-static)
+        endif()
+    else()
+        if(TARGET ${${RSPLUGIN_PREFIX}_LIBRARY}-shared)
+            append_to_list(${exec_q_prefix}_LIBS    ${${RSPLUGIN_PREFIX}_LIBRARY}-shared)
+        endif()
     endif()
     set(${exec_q_prefix}_LIBS   ${${exec_q_prefix}_LIBS}
                                 ${${RSPLUGIN_PREFIX}_LIBS}
@@ -157,7 +163,16 @@ function(configure_plugin_exec exec_name exec_prefix)
     add_executable(${${exec_q_prefix}_EXEC}
                     ${${exec_q_prefix}_SOURCES})
     
-    target_link_libraries(${${exec_q_prefix}_EXEC}  ${${exec_q_prefix}_LIBS})
+    if (CONNEXTDDS_ARCH MATCHES "^i86")
+        set_target_properties(${${exec_q_prefix}_EXEC}
+                PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+    endif()
+
+    if(${exec_prefix}_STATIC)
+        target_link_libraries(${${exec_q_prefix}_EXEC} -static)
+    endif()
+
+    target_link_libraries(${${exec_q_prefix}_EXEC} ${${exec_q_prefix}_LIBS})
 
     target_include_directories(${${exec_q_prefix}_EXEC}
             PUBLIC      ${${exec_q_prefix}_INCLUDES})
@@ -400,7 +415,6 @@ macro(configure_plugin_library)
         endif()
     endif()
 
-
     if(TARGET ${${RSPLUGIN_PREFIX}_LIBRARY_IDL})
         set(${RSPLUGIN_PREFIX}_LIBRARY_OBJECTS
             $<TARGET_OBJECTS:${${RSPLUGIN_PREFIX}_LIBRARY}>
@@ -425,6 +439,14 @@ macro(configure_plugin_library)
     set_target_properties(${${RSPLUGIN_PREFIX}_LIBRARY}-shared ${${RSPLUGIN_PREFIX}_LIBRARY}-static
         PROPERTIES OUTPUT_NAME "${${RSPLUGIN_PREFIX}_LIBRARY}")
 
+    if (CONNEXTDDS_ARCH MATCHES "^i86")
+        set_target_properties(${${RSPLUGIN_PREFIX}_LIBRARY}
+                PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+        set_target_properties(${${RSPLUGIN_PREFIX}_LIBRARY}-shared
+                PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+        set_target_properties(${${RSPLUGIN_PREFIX}_LIBRARY}-static
+                PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+    endif()
 
     install(FILES ${${RSPLUGIN_PREFIX}_INCLUDE_PUBLIC} DESTINATION 
         "${${RSPLUGIN_PREFIX}_DIST_INC_DIR}/${${RSPLUGIN_PREFIX}_INCLUDE_PREFIX_DIR}")

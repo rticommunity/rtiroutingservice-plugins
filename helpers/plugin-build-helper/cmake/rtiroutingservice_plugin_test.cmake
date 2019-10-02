@@ -76,6 +76,11 @@ macro(configure_tester)
                                     ${TESTER_COMMON_SOURCES}
                                     ${TESTER_COMMON_HEADERS})
     
+    if (CONNEXTDDS_ARCH MATCHES "^i86")
+        set_target_properties(${TESTER_TARGET}
+                PROPERTIES COMPILE_FLAGS "-m32" LINK_FLAGS "-m32")
+    endif()
+    
     target_link_libraries(${TESTER_TARGET} 
                             PUBLIC  ${TESTER_LIBS}
                                     ${TESTER_COMMON_LIBS})
