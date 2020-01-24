@@ -1024,6 +1024,7 @@ RTI_TSFM_Json_FlatTypeTransformation_serialize(
                 buffer_seq_initd = DDS_BOOLEAN_FALSE,
                 failed_serialization = DDS_BOOLEAN_FALSE;
     DDS_UnsignedLong serialized_size = 0;
+    char* p = NULL;
 
     RTI_TSFM_LOG_FN(RTI_TSFM_Json_FlatTypeTransformation_serialize)
 
@@ -1058,9 +1059,24 @@ RTI_TSFM_Json_FlatTypeTransformation_serialize(
             failed_serialization = DDS_BOOLEAN_TRUE;
             continue;
         }
+
+        /* update serialized_size to actual length of string */
+        p = strchr(self->state->json_buffer, '\0');
+        if (p == NULL)
+        {
+            /* TODO log */
+            goto done;
+        }
+        serialized_size = (p - self->state->json_buffer);
+        if (serialized_size == 0)
+        {
+            /* empty message */
+            /* TODO log */
+            goto done;
+        }
+
         if (self->config->indent == 0)
         {
-            char* p = NULL;
             /* Replace all '\n' with a space */
             for (p = self->state->json_buffer; 
                 (p = strchr(p, '\n')) != NULL; 

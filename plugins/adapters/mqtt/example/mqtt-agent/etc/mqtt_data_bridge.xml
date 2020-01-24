@@ -142,7 +142,7 @@
                             </value>
                         </property>
                     </input>
-                    <dds_output name="mqtt/in" participant="dds">
+                    <dds_output name="mqtt-in" participant="dds">
                         <registered_type_name>RTI::MQTT::KeyedMessage</registered_type_name>
                     </dds_output>
                 </route>
@@ -151,7 +151,7 @@
             <session name="dds_to_mqtt">
                 <route name="by_message_info">
                     <route_types>true</route_types>
-                    <dds_input name="mqtt/out" participant="dds">
+                    <dds_input name="mqtt-out" participant="dds">
                         <registered_type_name>RTI::MQTT::Message</registered_type_name>
                     </dds_input>
                     <output connection="mqtt">
@@ -168,7 +168,7 @@
                 </route>
                 <route name="to_single_topic">
                     <route_types>true</route_types>
-                    <dds_input name="mqtt/out" participant="dds">
+                    <dds_input name="mqtt-out" participant="dds">
                         <registered_type_name>RTI::MQTT::Message</registered_type_name>
                     </dds_input>
                     <output connection="mqtt">

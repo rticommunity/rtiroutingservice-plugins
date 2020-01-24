@@ -56,8 +56,8 @@
         <domain name="domain/def" domain_id="46">
             <register_type name="RTI::MQTT::Message" type_ref="RTI::MQTT::Message" />
             <register_type name="RTI::MQTT::KeyedMessage" type_ref="RTI::MQTT::KeyedMessage" />
-            <topic name="mqtt/in" register_type_ref="RTI::MQTT::KeyedMessage"/>
-            <topic name="mqtt/out" register_type_ref="RTI::MQTT::Message"/>
+            <topic name="mqtt-in" register_type_ref="RTI::MQTT::KeyedMessage"/>
+            <topic name="mqtt-out" register_type_ref="RTI::MQTT::Message"/>
         </domain>
     </domain_library>
 
@@ -66,12 +66,12 @@
         <domain_participant name="agent/def" domain_ref="MqttAgent/Domains::domain/def">
             <participant_qos name="qos" base_name="MqttAgent/Qos::agent"/>
             <publisher name="pub/def">
-                <data_writer name="output" topic_ref="mqtt/out">
+                <data_writer name="output" topic_ref="mqtt-out">
                     <datawriter_qos name="qos" base_name="MqttAgent/Qos::output"/>
                 </data_writer>
             </publisher>
             <subscriber name="sub/def">
-                <data_reader name="input" topic_ref="mqtt/in">
+                <data_reader name="input" topic_ref="mqtt-in">
                     <datareader_qos name="qos" base_name="MqttAgent/Qos::input"/>
                 </data_reader>
             </subscriber>

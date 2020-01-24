@@ -57,8 +57,8 @@ struct MqttAgent
 #else
 #define MQTT_AGENT_QOS_LIBRARY          "MqttAgent/Qos"
 #define MQTT_AGENT_PARTICIPANT_PROFILE  "agent"
-#define MQTT_AGENT_TOPIC_INPUT          "mqtt/in"
-#define MQTT_AGENT_TOPIC_OUTPUT         "mqtt/out"
+#define MQTT_AGENT_TOPIC_INPUT          "mqtt-in"
+#define MQTT_AGENT_TOPIC_OUTPUT         "mqtt-out"
 #define MQTT_AGENT_WRITER_PROFILE       "output"
 #define MQTT_AGENT_READER_PROFILE       "input"
 #define MQTT_AGENT_TYPE                 "Message"
