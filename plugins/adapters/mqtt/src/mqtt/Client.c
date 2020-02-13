@@ -1054,7 +1054,7 @@ RTI_MQTT_Client_new(struct RTI_MQTT_ClientConfig *config,
                 RTI_MQTT_Heap_allocate(sizeof(struct RTI_MQTT_Client));
     if (client == NULL)
     {
-        RTI_MQTT_HEAP_ALLOCATE_FAILED()
+        RTI_MQTT_HEAP_ALLOCATE_FAILED(sizeof(struct RTI_MQTT_Client))
         goto done;
     }
 

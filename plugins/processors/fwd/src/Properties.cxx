@@ -22,9 +22,9 @@ using namespace rti::routing::processor;
 using namespace rti::routing::adapter;
 
 const std::string property::PREFIX = "";
-const std::string property::FORWARDING_TABLE = PREFIX + "forwarding_table";
+const std::string property::FORWARDING_TABLE = property::PREFIX + "forwarding_table";
 
-const std::string property::INPUT_MEMBERS_TABLE = PREFIX + "input_members";
+const std::string property::INPUT_MEMBERS_TABLE = property::PREFIX + "input_members";
 
 const std::string property::FORWARDING_TABLE_KEY_IN_KEY = "input";
 const std::string property::FORWARDING_TABLE_KEY_OUT_NAME = "output";

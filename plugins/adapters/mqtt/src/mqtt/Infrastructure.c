@@ -1041,7 +1041,7 @@ RTI_MQTT_Mutex_take(RTI_MQTT_Mutex *self)
     if (WAIT_OBJECT_0 != wait_res)
     {
         /* TODO Log error */
-        goto error;
+        goto done;
     }
 
     retval = DDS_RETCODE_OK;
